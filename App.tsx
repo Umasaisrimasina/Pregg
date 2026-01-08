@@ -7,6 +7,15 @@ import { Mind } from './pages/Mind';
 import { Education } from './pages/Education';
 import { Transition } from './pages/Transition';
 import { Login } from './pages/Login';
+import { Community } from './pages/Community';
+import { PreConceptionMind } from './pages/PreConceptionMind';
+import { PregnancyMind } from './pages/PregnancyMind';
+import { PostPartumMind } from './pages/PostPartumMind';
+import { BabyCareMind } from './pages/BabyCareMind';
+import { PreConceptionEducation } from './pages/PreConceptionEducation';
+import { PregnancyEducation } from './pages/PregnancyEducation';
+import { PostPartumEducation } from './pages/PostPartumEducation';
+import { BabyCareEducation } from './pages/BabyCareEducation';
 import { ViewState, AppPhase, UserRole, PHASE_CONFIG } from './types';
 
 const App: React.FC = () => {
@@ -33,8 +42,23 @@ const App: React.FC = () => {
     switch (currentView) {
       case 'overview': return <Dashboard phase={currentPhase} role={currentRole} />;
       case 'nutrition': return <Nutrition phase={currentPhase} />;
-      case 'mind': return <Mind phase={currentPhase} />;
-      case 'education': return <Education phase={currentPhase} />;
+      case 'mind': 
+        switch (currentPhase) {
+          case 'pre-pregnancy': return <PreConceptionMind />;
+          case 'pregnancy': return <PregnancyMind />;
+          case 'post-partum': return <PostPartumMind phase={currentPhase} />;
+          case 'baby-care': return <BabyCareMind />;
+          default: return <Mind phase={currentPhase} />;
+        }
+      case 'education':
+        switch (currentPhase) {
+          case 'pre-pregnancy': return <PreConceptionEducation />;
+          case 'pregnancy': return <PregnancyEducation />;
+          case 'post-partum': return <PostPartumEducation />;
+          case 'baby-care': return <BabyCareEducation />;
+          default: return <Education phase={currentPhase} />;
+        }
+      case 'community': return <Community phase={currentPhase} />;
       case 'transition': return <Transition phase={currentPhase} setPhase={setPhase} />;
       default: return <Dashboard phase={currentPhase} role={currentRole} />;
     }

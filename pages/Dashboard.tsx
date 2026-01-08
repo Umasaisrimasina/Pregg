@@ -1121,12 +1121,47 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
   // VIEW: Post-Partum
   // ----------------------------------------------------------------------
   if (phase === 'post-partum') {
+      const moodSnapshotData = [
+        { day: 'Mon', value: 5 },
+        { day: 'Tue', value: 6 },
+        { day: 'Wed', value: 4 },
+        { day: 'Thu', value: 7 },
+        { day: 'Fri', value: 6 },
+        { day: 'Sat', value: 8 },
+        { day: 'Sun', value: 7 },
+      ];
+
+      const postPartumSleepData = [
+        { day: 'M', hours: 4.5 },
+        { day: 'T', hours: 5.2 },
+        { day: 'W', hours: 3.8 },
+        { day: 'T', hours: 5.0 },
+        { day: 'F', hours: 6.2 },
+        { day: 'S', hours: 5.5 },
+        { day: 'S', hours: 4.8 },
+      ];
+
+      const [recoveryChecklist, setRecoveryChecklist] = useState([
+        { label: 'Pelvic Floor Exercises', done: true },
+        { label: 'Hydration (8 glasses)', done: false },
+        { label: 'Postnatal Vitamin', done: false },
+        { label: '15 min Walk', done: true },
+      ]);
+
+      const toggleChecklistItem = (index: number) => {
+        setRecoveryChecklist(prev => 
+          prev.map((item, i) => i === index ? { ...item, done: !item.done } : item)
+        );
+      };
+
+      const avgSleep = (postPartumSleepData.reduce((sum, d) => sum + d.hours, 0) / postPartumSleepData.length).toFixed(1);
+
       return (
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold uppercase tracking-wider mb-2">
+              <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
               Recovery
             </div>
             <h1 className="text-3xl font-display font-extrabold text-slate-900">Post-Partum</h1>
@@ -1134,65 +1169,185 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
           </div>
         </div>
 
-        {/* Mood & Sleep Overview */}
+        {/* 2-Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-           <div className="bg-indigo-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-[80px] opacity-40"></div>
-              <div className="relative z-10">
-                <h2 className="text-2xl font-bold font-display mb-2">How are {role === 'mother' ? 'you' : 'they'} feeling?</h2>
-                <p className="text-indigo-200 text-sm mb-8">It's normal to feel a mix of emotions right now. Tracking helps.</p>
-                <div className="flex gap-4">
-                  {['😔', '😐', '🙂', '🤩'].map((emoji, i) => (
-                    <button key={i} className="w-14 h-14 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-2xl text-2xl flex items-center justify-center transition-all">
-                      {emoji}
-                    </button>
-                  ))}
+          
+          {/* Left Column */}
+          <div className="space-y-6">
+            
+            {/* Motivational Quote */}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-[2rem] p-8 border border-purple-100 relative overflow-hidden">
+              <div className="absolute top-4 right-4">
+                <Heart size={24} className="text-purple-500" fill="currentColor" />
+              </div>
+              <p className="font-serif italic text-xl text-slate-800 leading-relaxed" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                "You are doing amazing, mama. Every small step forward is a victory."
+              </p>
+            </div>
+
+            {/* Mood Snapshot Card */}
+            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+                    <Activity size={20} className="text-purple-600" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg">Mood Snapshot</h3>
+                </div>
+                <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
+                  Stable
+                </span>
+              </div>
+              
+              <div className="h-40 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={moodSnapshotData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorMoodPurpleDash" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="day" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#94a3b8', fontSize: 11 }} 
+                    />
+                    <YAxis hide domain={[0, 10]} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="value" 
+                      stroke="#8b5cf6" 
+                      strokeWidth={3}
+                      fill="url(#colorMoodPurpleDash)" 
+                      dot={{ r: 4, fill: "#ffffff", stroke: "#8b5cf6", strokeWidth: 2 }}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Sleep Pattern Card */}
+            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                    <Moon size={20} className="text-purple-600" />
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg">Sleep Pattern</h3>
+                </div>
+                <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold">
+                  Avg: {avgSleep}h
+                </span>
+              </div>
+              
+              <div className="h-32 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={postPartumSleepData}>
+                    <XAxis 
+                      dataKey="day" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#94a3b8', fontSize: 11 }} 
+                    />
+                    <YAxis hide domain={[0, 10]} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                      formatter={(value: number) => [`${value}h`, 'Sleep']}
+                    />
+                    <Bar 
+                      dataKey="hours" 
+                      fill="#8b5cf6" 
+                      radius={[4, 4, 4, 4]} 
+                      barSize={24}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+            
+            {/* Wellness Screening Card */}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-[2rem] p-8 border border-purple-100 relative overflow-hidden">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                  <Sparkles size={28} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-lg">Wellness Screening</h3>
+                  <p className="text-xs text-slate-500">EPDS Assessment</p>
                 </div>
               </div>
-           </div>
-
-           <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><Moon size={20}/></div>
-                <h3 className="font-bold text-slate-900">Sleep Pattern</h3>
-              </div>
-              <div className="h-32 flex items-end justify-between gap-2">
-                 {sleepData.map((d, i) => (
-                   <div key={i} className="flex flex-col items-center gap-2 flex-1">
-                     <div className="w-full bg-slate-100 rounded-t-lg relative group h-full overflow-hidden">
-                        <div 
-                          className="absolute bottom-0 left-0 w-full bg-indigo-400 rounded-t-lg transition-all duration-1000"
-                          style={{ height: `${(d.hours / 10) * 100}%` }}
-                        ></div>
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                          {d.hours} hrs
-                        </div>
-                     </div>
-                     <span className="text-xs font-bold text-slate-400">{d.day}</span>
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </div>
-
-        {/* Essentials */}
-        <div className="bg-white rounded-[2rem] p-8 border border-slate-100">
-           <h3 className="font-bold text-slate-900 mb-4">Recovery Checklist</h3>
-           <div className="space-y-3">
-             {[
-               { label: 'Pelvic Floor Exercises', done: true },
-               { label: 'Hydration (8 glasses)', done: false },
-               { label: 'Take Postnatal Vitamin', done: false },
-               { label: '15 min Walk', done: true },
-             ].map((item, i) => (
-               <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-slate-50 hover:bg-slate-50 transition-colors">
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer ${item.done ? 'bg-indigo-500 border-indigo-500' : 'border-slate-300'}`}>
-                    {item.done && <CheckCircle2 size={14} className="text-white" />}
+              
+              <div className="bg-white rounded-2xl p-5 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium text-slate-600">Last Score</span>
+                  <span className="text-2xl font-bold text-purple-600">7/30</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-purple-100 rounded-full overflow-hidden">
+                    <div className="h-full w-[23%] bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full"></div>
                   </div>
-                  <span className={`font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{item.label}</span>
-               </div>
-             ))}
-           </div>
+                  <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-[10px] font-bold">
+                    Low Risk
+                  </span>
+                </div>
+              </div>
+              
+              <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-purple-600/20 hover:from-purple-700 hover:to-indigo-700 transition-all">
+                Take Full Screening
+              </button>
+            </div>
+
+            {/* Recovery Checklist */}
+            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <CheckCircle2 size={20} className="text-purple-600" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-lg">Recovery Checklist</h3>
+              </div>
+              
+              <div className="space-y-3">
+                {recoveryChecklist.map((item, i) => (
+                  <div 
+                    key={i} 
+                    onClick={() => toggleChecklistItem(i)}
+                    className={`flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
+                      item.done 
+                        ? 'bg-purple-50 border-purple-100' 
+                        : 'border-slate-100 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      item.done 
+                        ? 'bg-purple-500 border-purple-500' 
+                        : 'border-slate-300'
+                    }`}>
+                      {item.done && <CheckCircle2 size={14} className="text-white" />}
+                    </div>
+                    <span className={`font-medium ${
+                      item.done 
+                        ? 'text-purple-700' 
+                        : 'text-slate-700'
+                    }`}>
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     );

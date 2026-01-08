@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutGrid, Utensils, BrainCircuit, GraduationCap, ArrowRightCircle, LogOut, Leaf, ChevronDown, Baby, Heart, Stethoscope } from 'lucide-react';
+import { LayoutGrid, Utensils, BrainCircuit, GraduationCap, ArrowRightCircle, LogOut, Leaf, ChevronDown, Baby, Heart, Stethoscope, Users } from 'lucide-react';
 import { ViewState, AppPhase, UserRole, PHASE_CONFIG } from '../types';
 
 interface SidebarProps {
@@ -16,12 +16,43 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, currentPhase, currentRole, setPhase, isMobileOpen, setIsMobileOpen, onLogout }) => {
   const [isPhaseMenuOpen, setIsPhaseMenuOpen] = useState(false);
   
-  const navItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutGrid },
-    { id: 'nutrition', label: 'Nutrition & Diet', icon: Utensils },
-    { id: 'mind', label: 'Wellness & Mind', icon: BrainCircuit },
-    { id: 'education', label: 'Library', icon: GraduationCap },
-  ];
+  const getNavItems = () => {
+    const baseItems = [
+      { id: 'overview', label: 'Overview', icon: LayoutGrid },
+      { id: 'nutrition', label: 'Nutrition & Diet', icon: Utensils },
+    ];
+
+    let mindLabel = 'Wellness & Mind';
+    let educationLabel = 'Library';
+
+    switch (currentPhase) {
+      case 'pre-pregnancy':
+        mindLabel = 'Fertility & Wellness';
+        educationLabel = 'Pre-Conception Guide';
+        break;
+      case 'pregnancy':
+        mindLabel = 'Prenatal Wellness';
+        educationLabel = 'Pregnancy Library';
+        break;
+      case 'post-partum':
+        mindLabel = 'Stress & Mind';
+        educationLabel = 'Recovery Resources';
+        break;
+      case 'baby-care':
+        mindLabel = 'Parent Wellness';
+        educationLabel = 'Baby Care Guide';
+        break;
+    }
+
+    return [
+      ...baseItems,
+      { id: 'mind', label: mindLabel, icon: BrainCircuit },
+      { id: 'education', label: educationLabel, icon: GraduationCap },
+      { id: 'community', label: 'Mom Community', icon: Users },
+    ];
+  };
+
+  const navItems = getNavItems();
 
   const handleNavClick = (view: ViewState) => {
     setView(view);
