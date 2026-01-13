@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './pages/Dashboard';
@@ -16,6 +17,7 @@ import { PreConceptionEducation } from './pages/PreConceptionEducation';
 import { PregnancyEducation } from './pages/PregnancyEducation';
 import { PostPartumEducation } from './pages/PostPartumEducation';
 import { BabyCareEducation } from './pages/BabyCareEducation';
+import { AboutLanding } from './pages/AboutLanding';
 import { ViewState, AppPhase, UserRole, PHASE_CONFIG } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { HealthDataProvider } from './contexts/HealthDataContext';
@@ -23,25 +25,44 @@ import { RiskDataProvider } from './contexts/RiskDataContext';
 import { LanguageSelector } from './components/LanguageSelector';
 import { RiskAnalysis } from './pages/RiskAnalysis';
 
-const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentView, setView] = useState<ViewState>('overview');
-  const [currentPhase, setPhase] = useState<AppPhase>('pre-pregnancy');
-  const [currentRole, setRole] = useState<UserRole>('mother');
+// Landing Page wrapper component
+const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const handleGetStarted = () => {
+    navigate('/login');
+  };
+
+  return <AboutLanding onGetStarted={handleGetStarted} />;
+};
+
+// Login Page wrapper component
+const LoginPage: React.FC<{ onLogin: (phase: AppPhase, role: UserRole) => void }> = ({ onLogin }) => {
+  const navigate = useNavigate();
+  
+  const handleLogin = (phase: AppPhase, role: UserRole) => {
+    onLogin(phase, role);
+    navigate('/app');
+  };
+
+  return (
+    <LanguageProvider>
+      <Login onLogin={handleLogin} />
+    </LanguageProvider>
+  );
+};
+
+// Main App content (after authentication)
+const MainApp: React.FC<{
+  currentView: ViewState;
+  setView: (view: ViewState) => void;
+  currentPhase: AppPhase;
+  setPhase: (phase: AppPhase) => void;
+  currentRole: UserRole;
+  onLogout: () => void;
+}> = ({ currentView, setView, currentPhase, setPhase, currentRole, onLogout }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-
-  const handleLogin = (selectedPhase: AppPhase, selectedRole: UserRole) => {
-    setPhase(selectedPhase);
-    setRole(selectedRole);
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setView('overview');
-    setPhase('pre-pregnancy');
-    setRole('mother');
-  };
+  const themeColor = PHASE_CONFIG[currentPhase].theme;
 
   const renderView = () => {
     switch (currentView) {
@@ -70,23 +91,11 @@ const App: React.FC = () => {
     }
   };
 
-  const themeColor = PHASE_CONFIG[currentPhase].theme;
-
-  if (!isAuthenticated) {
-    return (
-      <LanguageProvider>
-        <Login onLogin={handleLogin} />
-      </LanguageProvider>
-    );
-  }
-
   return (
     <LanguageProvider>
       <HealthDataProvider>
         <RiskDataProvider>
           <div className={`min-h-screen bg-gray-50/50 flex text-slate-900 font-sans theme-${themeColor}`}>
-
-            {/* Sidebar Component */}
             <Sidebar
               currentView={currentView}
               setView={setView}
@@ -95,13 +104,9 @@ const App: React.FC = () => {
               setPhase={setPhase}
               isMobileOpen={isMobileOpen}
               setIsMobileOpen={setIsMobileOpen}
-              onLogout={handleLogout}
+              onLogout={onLogout}
             />
-
-            {/* Main Content Area */}
             <main className="flex-1 flex flex-col min-w-0 transition-all duration-300 lg:ml-72">
-
-              {/* Mobile Header */}
               <header className="lg:hidden sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 p-4 flex items-center justify-between">
                 <button
                   onClick={() => setIsMobileOpen(true)}
@@ -117,13 +122,9 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </header>
-
-              {/* Desktop Language Selector */}
               <div className="hidden lg:flex justify-end p-4 pb-0">
                 <LanguageSelector />
               </div>
-
-              {/* Page Content */}
               <div className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto max-h-screen scroll-smooth">
                 <div className="max-w-[1600px] mx-auto">
                   {renderView()}
@@ -134,6 +135,68 @@ const App: React.FC = () => {
         </RiskDataProvider>
       </HealthDataProvider>
     </LanguageProvider>
+  );
+};
+
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentView, setView] = useState<ViewState>('overview');
+  const [currentPhase, setPhase] = useState<AppPhase>('pre-pregnancy');
+  const [currentRole, setRole] = useState<UserRole>('mother');
+
+  const handleLogin = (selectedPhase: AppPhase, selectedRole: UserRole) => {
+    setPhase(selectedPhase);
+    setRole(selectedRole);
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setView('overview');
+    setPhase('pre-pregnancy');
+    setRole('mother');
+  };
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route 
+          path="/login" 
+          element={
+            isAuthenticated ? (
+              <MainApp
+                currentView={currentView}
+                setView={setView}
+                currentPhase={currentPhase}
+                setPhase={setPhase}
+                currentRole={currentRole}
+                onLogout={handleLogout}
+              />
+            ) : (
+              <LoginPage onLogin={handleLogin} />
+            )
+          } 
+        />
+        <Route 
+          path="/app/*" 
+          element={
+            isAuthenticated ? (
+              <MainApp
+                currentView={currentView}
+                setView={setView}
+                currentPhase={currentPhase}
+                setPhase={setPhase}
+                currentRole={currentRole}
+                onLogout={handleLogout}
+              />
+            ) : (
+              <LoginPage onLogin={handleLogin} />
+            )
+          } 
+        />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

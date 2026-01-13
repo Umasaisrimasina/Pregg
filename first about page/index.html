@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="A trust-first maternal and early childhood health platform. Evidence-based care before, during, and after pregnancy.">
+    <title>Maternal Care — Trust-First Health Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- Fixed Canvas Background -->
+    <canvas id="animation-canvas" aria-hidden="true"></canvas>
+
+    <!-- Mobile Fallback Image -->
+    <div id="mobile-fallback" class="mobile-fallback" aria-hidden="true">
+        <img src="split frames light theme/frame_045_delay-0.041s.webp" alt="" loading="eager">
+    </div>
+
+    <!-- Scroll Container -->
+    <main id="scroll-container" class="scroll-container">
+
+        <!-- Section 1: Emotional Intro -->
+        <section id="section-intro" class="content-section section-intro" aria-label="Introduction">
+            <div class="text-overlay" id="intro-text">
+                <h1>Care shouldn't end after birth.</h1>
+            </div>
+        </section>
+
+        <!-- Section 2: Problem Statement -->
+        <section id="section-problem" class="content-section section-problem" aria-label="The Problem">
+            <div class="text-overlay" id="problem-text">
+                <p class="statement">Most mothers are left unsupported when care matters most.</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Feature Reveal -->
+        <section id="section-features" class="content-section section-features" aria-label="What We Offer">
+
+            <!-- Feature Card 1 -->
+            <article class="feature-card" id="feature-1">
+                <h2>Before Pregnancy</h2>
+                <p>Prepare your body and mind before conception using evidence-based guidance.</p>
+            </article>
+
+            <!-- Feature Card 2 -->
+            <article class="feature-card" id="feature-2">
+                <h2>During Pregnancy</h2>
+                <p>Clear nutrition, mental health support, and week-by-week guidance.</p>
+            </article>
+
+            <!-- Feature Card 3 -->
+            <article class="feature-card" id="feature-3">
+                <h2>After Birth &amp; Baby Care</h2>
+                <p>Protect mothers and infants from unsafe products, practices, and environments.</p>
+            </article>
+
+            <!-- Feature Card 4 (USP) -->
+            <article class="feature-card feature-card-usp" id="feature-4">
+                <h2>Truth Over Tradition</h2>
+                <p>Compare Indian practices with global medical safety standards.</p>
+            </article>
+
+        </section>
+
+        <!-- Final CTA Section -->
+        <section id="section-cta" class="content-section section-cta" aria-label="Get Started">
+            <div class="cta-container" id="cta-content">
+                <a href="#" class="btn-primary" id="btn-get-started">Get Started</a>
+                <a href="#" class="btn-secondary" id="btn-privacy">How we protect your privacy</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Reduced Motion Notice (SR only) -->
+    <div class="sr-only" aria-live="polite" id="motion-notice"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,519 @@
+/* =============================================
+   MATERNAL CARE — LANDING PAGE STYLES
+   Modern, Premium, Medical-Grade UI
+   Fixed Right Column for Text Content
+   ============================================= */
+
+/* ---------- CSS Custom Properties (Light Theme) ---------- */
+:root,
+[data-theme="light"] {
+    --color-bg: #f9f7f2;
+    /* Warmer, more paper-like */
+    --color-bg-soft: #fffefb;
+    --color-text-primary: #1a1c1e;
+    --color-text-secondary: #4a4f56;
+    --color-text-muted: #7d8b96;
+
+    --color-accent: #2d6a4f;
+    --color-accent-soft: #85c7a2;
+    --color-accent-hover: #1b4332;
+    --color-accent-light: #e6f7ec;
+
+    /* Ultra Premium Card Variables */
+    --color-card-bg: rgba(255, 255, 255, 0.7);
+    --color-card-border: rgba(255, 255, 255, 0.6);
+    --color-card-border-inner: rgba(255, 255, 255, 0.3);
+    --color-overlay-bg: rgba(249, 247, 242, 0.5);
+
+    --color-shadow: rgba(45, 106, 79, 0.08);
+    /* Colored shadow for depth */
+    --color-shadow-strong: rgba(28, 64, 48, 0.15);
+    --color-glow: rgba(45, 106, 79, 0.15);
+
+    --gradient-primary: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+    --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
+
+    --font-family-sans: 'Inter', sans-serif;
+    --font-family-display: 'Playfair Display', serif;
+    /* Editorial Font */
+
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.75rem;
+    --font-size-2xl: 2.5rem;
+    --font-size-3xl: clamp(3rem, 5vw, 4.5rem);
+
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 4rem;
+    --space-2xl: 8rem;
+
+    --radius-sm: 12px;
+    --radius-md: 24px;
+    --radius-lg: 40px;
+
+    /* Luxurious Smooth Easing (Quintic Out) - Less bouncy, more flow */
+    --ease-key: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --transition-fast: 300ms var(--ease-smooth);
+    --transition-normal: 600ms var(--ease-key);
+    --transition-slow: 1000ms var(--ease-key);
+}
+
+/* ---------- Dark Theme ---------- */
+[data-theme="dark"] {
+    --color-bg: #050505;
+    --color-bg-soft: #0a0a0a;
+    --color-text-primary: #f2f2f2;
+    --color-text-secondary: #a0a0a0;
+    --color-text-muted: #666;
+
+    --color-accent: #52b788;
+    --color-accent-soft: #2d6a4f;
+    --color-accent-hover: #74c69d;
+
+    --color-card-bg: rgba(20, 20, 20, 0.7);
+    --color-card-border: rgba(255, 255, 255, 0.1);
+    --color-card-border-inner: rgba(255, 255, 255, 0.05);
+    --color-overlay-bg: rgba(0, 0, 0, 0.6);
+
+    --color-shadow: rgba(0, 0, 0, 0.5);
+    --color-shadow-strong: rgba(0, 0, 0, 0.8);
+    --color-glow: rgba(82, 183, 136, 0.15);
+
+    --gradient-primary: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+    --gradient-surface: linear-gradient(180deg, rgba(30, 30, 30, 0.8) 0%, rgba(20, 20, 20, 0.4) 100%);
+}
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-bg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background-color var(--transition-normal);
+    position: relative;
+    overscroll-behavior-y: none;
+}
+
+/* ---------- Noise Texture Overlay ---------- */
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9000;
+    pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+}
+
+[data-theme="dark"] .noise-overlay {
+    opacity: 0.05;
+}
+
+/* ---------- Canvas (Video) - Fixed Left ---------- */
+#animation-canvas {
+    position: fixed;
+    top: 50%;
+    left: 2%;
+    transform: translateY(-50%);
+
+    width: 46%;
+    max-width: 900px;
+    height: auto;
+    aspect-ratio: 16/9;
+
+    z-index: 0;
+    pointer-events: none;
+
+    border-radius: var(--radius-lg);
+    box-shadow:
+        0 20px 50px -10px var(--color-shadow-strong),
+        0 0 0 1px var(--color-card-border);
+}
+
+/* ---------- Scroll Container ---------- */
+.scroll-container {
+    position: relative;
+    z-index: 10;
+    min-height: 400vh;
+}
+
+/* Content sections are just spacers now */
+.content-section {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* ---------- FIXED Right Column Content ---------- */
+/* All text content is fixed to the right side of the screen */
+
+.text-overlay {
+    position: fixed;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 40%;
+    max-width: 600px;
+    text-align: left;
+    z-index: 20;
+    pointer-events: none;
+
+    /* Hidden state */
+    opacity: 0;
+}
+
+.text-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 400ms var(--ease-smooth);
+}
+
+/* ---------- Section 1: Hero ---------- */
+/* ---------- Section 1: Hero ---------- */
+#intro-text h1 {
+    font-family: var(--font-family-display);
+    /* Playfair Display */
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-regular);
+    /* Lighter weight for elegance */
+    color: var(--color-text-primary);
+    text-shadow: 0 4px 12px var(--color-shadow);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+#intro-text h1::after {
+    /* Underline accent */
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--color-accent);
+    margin: var(--space-md) 0 0;
+    border-radius: var(--radius-lg);
+}
+
+/* ---------- Section 2: Problem ---------- */
+#problem-text .statement {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-primary);
+    line-height: 1.4;
+    padding: var(--space-xl);
+
+    background: var(--color-overlay-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 60px -10px var(--color-shadow-strong);
+}
+
+/* Ambient Glow Effect - Added to card or container via JS or just CSS pseudo */
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, var(--color-glow) 0%, transparent 70%);
+    z-index: -1;
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 500ms ease;
+}
+
+/* ---------- Feature Cards - Fixed Right ---------- */
+.feature-card {
+    position: fixed;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%) scale(0.92);
+    transform: translateY(-45%) scale(0.95);
+
+    width: 40%;
+    max-width: 500px;
+    padding: var(--space-lg);
+
+    /* Premium Design: Double Border & Gradient Surface */
+    background: var(--gradient-surface);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+
+    /* Double Border Effect using Box Shadow */
+    border: 1px solid var(--color-card-border);
+    box-shadow:
+        inset 0 0 0 1px var(--color-card-border-inner),
+        0 20px 40px -10px var(--color-shadow-strong),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    /* Subtle outer ring */
+
+    border-radius: var(--radius-md);
+
+    z-index: 20;
+    pointer-events: none;
+    text-align: left;
+
+    /* Hidden state */
+    opacity: 0;
+    filter: blur(8px);
+}
+
+.feature-card.visible {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+    filter: blur(0);
+    pointer-events: auto;
+
+    /* Ultra-Smooth Entrance */
+    transition:
+        opacity 600ms ease-out,
+        transform 800ms var(--ease-key),
+        filter 600ms ease-out;
+}
+
+/* Staggered Text Animations */
+.feature-card h2,
+.feature-card p {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 500ms var(--ease-smooth);
+}
+
+.feature-card.visible h2 {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 150ms;
+    /* Delay title */
+}
+
+.feature-card.visible p {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 250ms;
+    /* Delay body text further */
+}
+
+.feature-card h2 {
+    color: var(--color-text-primary);
+    /* Use primary text for better contrast */
+    font-family: var(--font-family-display);
+    /* Playfair Display */
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-regular);
+    /* Elegance over weight */
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+}
+
+.feature-card h2::after {
+    /* Elegant line */
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: var(--color-accent);
+    margin: var(--space-sm) 0 0;
+    opacity: 0.6;
+}
+
+.feature-card p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* USP Card Variation - Now unified with standard card */
+/* .feature-card-usp is just a hook if needed later */
+
+/* ---------- CTA Section ---------- */
+.cta-container {
+    position: fixed;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 40%;
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+
+    z-index: 20;
+    pointer-events: none;
+
+    opacity: 0;
+}
+
+.cta-container.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 500ms var(--ease-smooth);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-lg);
+    padding: var(--space-sm) var(--space-2xl);
+    border-radius: 99px;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 10px 20px -5px var(--color-glow);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px var(--color-glow);
+}
+
+.btn-primary:hover::after {
+    left: 100%;
+}
+
+.btn-secondary {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    color: var(--color-accent);
+}
+
+/* ---------- Theme Toggle ---------- */
+.theme-toggle {
+    position: fixed;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-primary);
+    transition: transform var(--transition-spring), box-shadow var(--transition-fast);
+    box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 16px var(--color-shadow-strong);
+}
+
+/* Mobile Fallback */
+.mobile-fallback {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    object-fit: cover;
+    display: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    #animation-canvas {
+        top: 20%;
+        left: 50%;
+        width: 90%;
+        transform: translate(-50%, -50%);
+    }
+
+    .text-overlay,
+    .feature-card,
+    .cta-container {
+        position: fixed;
+        top: auto;
+        bottom: 10%;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: none;
+        text-align: center;
+    }
+
+    .feature-card.visible {
+        transform: translateX(50%) scale(1);
+    }
+
+    .feature-card h2::after {
+        margin: var(--space-sm) auto 0;
+    }
+
+    .cta-container {
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    #animation-canvas {
+        display: none;
+    }
+
+    .mobile-fallback {
+        display: block;
+    }
+}
