@@ -216,6 +216,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
   const [isMidwifeChatLoading, setIsMidwifeChatLoading] = useState(false);
   const midwifeChatRef = useRef<HTMLDivElement>(null);
 
+  // Cravings Tracker State
+  const [cravings, setCravings] = useState<Array<{ id: number; food: string; intensity: 'mild' | 'moderate' | 'strong'; timestamp: Date; satisfied: boolean }>>([
+    { id: 1, food: 'Pickles', intensity: 'strong', timestamp: new Date(Date.now() - 86400000), satisfied: true },
+    { id: 2, food: 'Ice Cream', intensity: 'moderate', timestamp: new Date(Date.now() - 172800000), satisfied: true },
+    { id: 3, food: 'Spicy Food', intensity: 'mild', timestamp: new Date(Date.now() - 259200000), satisfied: false },
+  ]);
+  const [newCraving, setNewCraving] = useState('');
+  const [newCravingIntensity, setNewCravingIntensity] = useState<'mild' | 'moderate' | 'strong'>('moderate');
+  const [showCravingInput, setShowCravingInput] = useState(false);
+
   // AQI State
   const [aqiState, setAqiState] = useState<AQIState>({
     data: null,
@@ -231,7 +241,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
         reject(new Error('Geolocation not supported'));
         return;
       }
-      
+
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
@@ -266,13 +276,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
     const token = import.meta.env.VITE_WAQI_API_TOKEN;
     const url = `https://api.waqi.info/feed/geo:${lat};${lon}/?token=${token}`;
     console.log("Fetching AQI from:", url);
-    
+
     const res = await fetch(url);
     const data = await res.json();
-    
+
     console.log("AQI DATA:", data.data);
     console.log("Station:", data.data?.city?.name);
-    
+
     if (data.status === 'ok' && data.data) {
       return {
         aqi: data.data.aqi,
@@ -287,10 +297,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
   // Main AQI fetch function with location handling
   const fetchAQI = useCallback(async () => {
     setAqiState(prev => ({ ...prev, loading: true, error: null }));
-    
+
     try {
       let coords: { lat: number; lon: number };
-      
+
       // Try browser geolocation first
       try {
         coords = await getUserLocation();
@@ -299,11 +309,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
         console.log('Geolocation failed, falling back to IP location:', geoError);
         coords = await getLocationFromIP();
       }
-      
+
       // Fetch AQI with coordinates
       const aqiData = await fetchAQIWithCoords(coords.lat, coords.lon);
       setAqiState({ data: aqiData, loading: false, error: null });
-      
+
     } catch (err) {
       console.error("AQI fetch failed:", err);
       setAqiState({
@@ -351,6 +361,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
     setIsMidwifeChatLoading(false);
   };
 
+  // Cravings Tracker Handlers
+  const addCraving = () => {
+    if (!newCraving.trim()) return;
+    setCravings(prev => [
+      { id: Date.now(), food: newCraving.trim(), intensity: newCravingIntensity, timestamp: new Date(), satisfied: false },
+      ...prev
+    ]);
+    setNewCraving('');
+    setShowCravingInput(false);
+  };
+
+  const toggleCravingSatisfied = (id: number) => {
+    setCravings(prev => prev.map(c => c.id === id ? { ...c, satisfied: !c.satisfied } : c));
+  };
+
+  const deleteCraving = (id: number) => {
+    setCravings(prev => prev.filter(c => c.id !== id));
+  };
+
   // handleWatchAuth now uses context
   const handleWatchAuth = () => {
     setIsAuthorizing(true);
@@ -384,7 +413,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
         <div className="mb-2 flex items-start justify-between">
           <div>
             <span className="text-xs font-bold text-rose-500 uppercase tracking-widest">MODE: PARTNER PERSPECTIVE</span>
-            <h1 className="text-4xl font-display font-extrabold text-slate-900 mt-1">Your Pregnancy Journey</h1>
+            <h1 className="text-4xl font-display font-extrabold text-slate-900 dark:text-white mt-1">Your Pregnancy Journey</h1>
           </div>
           <SpeakButton text="Partner Perspective. Your Pregnancy Journey. Support your partner through this beautiful journey." />
         </div>
@@ -394,15 +423,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
           {/* Left Column (Checklist & Goal) */}
           <div className="xl:col-span-8 space-y-6">
             {/* Checklist Card */}
-            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
+            <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg">
                     <CheckSquare size={24} />
                   </div>
-                  <h2 className="text-xl font-bold font-display text-slate-900">Your Support Checklist</h2>
+                  <h2 className="text-xl font-bold font-display text-slate-900 dark:text-white">Your Support Checklist</h2>
                 </div>
-                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">4 Tasks Pending</span>
+                <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold">4 Tasks Pending</span>
               </div>
 
               <div className="space-y-4">
@@ -410,38 +439,38 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                   { title: 'Buy iron supplements', due: 'Due: Today', done: false },
                   { title: 'Install car seat', due: 'Due: Next Week', done: false },
                 ].map((task, i) => (
-                  <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors group cursor-pointer">
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-dark-700 hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors group cursor-pointer">
                     <div className="flex items-center gap-4">
-                      <div className="w-6 h-6 rounded border-2 border-slate-300 group-hover:border-blue-500"></div>
+                      <div className="w-6 h-6 rounded border-2 border-slate-300 dark:border-dark-600 group-hover:border-blue-500 dark:group-hover:border-blue-500"></div>
                       <div>
-                        <h3 className="font-bold text-slate-900 text-base">{task.title}</h3>
-                        <p className="text-xs text-slate-400 font-medium">{task.due}</p>
+                        <h3 className="font-bold text-slate-900 dark:text-white text-base">{task.title}</h3>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{task.due}</p>
                       </div>
                     </div>
-                    <ArrowRight size={18} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
+                    <ArrowRight size={18} className="text-slate-300 dark:text-dark-600 group-hover:text-blue-500 transition-colors" />
                   </div>
                 ))}
               </div>
 
-              <button className="mt-6 w-full py-3 text-sm font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+              <button className="mt-6 w-full py-3 text-sm font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 rounded-xl transition-colors">
                 + Add Task for Yourself
               </button>
             </div>
 
             {/* Goal Card */}
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-lg shadow-blue-900/20">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-900 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-lg shadow-blue-900/20">
               <div className="relative z-10 max-w-xl">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <h2 className="text-2xl font-display font-bold mb-3">Tonight's Goal: Iron-Rich Dinner</h2>
-                    <p className="text-blue-100 text-sm leading-relaxed mb-8">
+                    <p className="text-blue-100 dark:text-blue-200 text-sm leading-relaxed mb-8">
                       Maya's latest blood test showed iron levels are slightly on the lower side. Doctors suggest adding more spinach or lentils to her diet.
                     </p>
                   </div>
                   <SpeakButton text="Tonight's Goal: Iron-Rich Dinner. Maya's latest blood test showed iron levels are slightly on the lower side. Doctors suggest adding more spinach or lentils to her diet." className="text-white border-white/30 bg-white/10 hover:bg-white/20" />
                 </div>
                 <div className="flex gap-4">
-                  <button className="bg-white text-blue-700 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-50 transition-colors">
+                  <button className="bg-white text-blue-700 dark:text-blue-900 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-50 transition-colors">
                     <ChefHat size={18} /> View Recipes
                   </button>
                   <button className="bg-blue-500/30 backdrop-blur-sm text-white border border-white/20 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-500/40 transition-colors">
@@ -454,22 +483,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
             {/* Bottom Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-[2rem] p-6 border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
-                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+              <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-6 border border-slate-100 dark:border-dark-700 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+                <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center">
                   <ShoppingCart size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">Shopping List</h3>
-                  <p className="text-xs text-slate-500 mt-1">Dates, Spinach, Walnut, Milk</p>
+                  <h3 className="font-bold text-slate-900 dark:text-white">Shopping List</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Dates, Spinach, Walnut, Milk</p>
                 </div>
               </div>
-              <div className="bg-white rounded-[2rem] p-6 border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
-                <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
+              <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-6 border border-slate-100 dark:border-dark-700 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+                <div className="w-14 h-14 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center">
                   <MessageCircle size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900">Support Chat</h3>
-                  <p className="text-xs text-slate-500 mt-1">Ask nutritionists or mentors</p>
+                  <h3 className="font-bold text-slate-900 dark:text-white">Support Chat</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ask nutritionists or mentors</p>
                 </div>
               </div>
             </div>
@@ -478,13 +507,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
           {/* Right Column */}
           <div className="xl:col-span-4 space-y-6">
             {/* Tip of the Day */}
-            <div className="bg-[#fffbeb] rounded-[2rem] p-8 border border-amber-50">
-              <div className="flex items-center gap-2 mb-4 text-amber-700">
+            <div className="bg-[#fffbeb] dark:bg-amber-900/20 rounded-[2rem] p-8 border border-amber-50 dark:border-amber-900/30">
+              <div className="flex items-center gap-2 mb-4 text-amber-700 dark:text-amber-500">
                 <Heart size={18} className="fill-current" />
                 <span className="text-xs font-bold uppercase tracking-widest">Partner Tip of the Day</span>
               </div>
               <div className="flex items-start gap-2">
-                <p className="text-amber-900 italic text-sm leading-relaxed font-medium flex-1">
+                <p className="text-amber-900 dark:text-amber-200 italic text-sm leading-relaxed font-medium flex-1">
                   "At 24 weeks, many mothers experience back pain. Offer a 10-minute foot or lower back massage tonight before bed. It goes a long way in mental wellness."
                 </p>
                 <SpeakButton text="Partner Tip of the Day. At 24 weeks, many mothers experience back pain. Offer a 10-minute foot or lower back massage tonight before bed. It goes a long way in mental wellness." size={14} />
@@ -492,27 +521,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
             </div>
 
             {/* Appointments */}
-            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-2">Maya's Appointments</h3>
-              <p className="text-xs text-slate-500 mb-6">Ensure you've blocked your calendar for these:</p>
+            <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700 shadow-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2">Maya's Appointments</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Ensure you've blocked your calendar for these:</p>
 
-              <div className="bg-slate-50 p-4 rounded-2xl border-l-4 border-blue-500">
-                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wide block mb-1">In 4 Days</span>
-                <h4 className="font-bold text-slate-900">Anomaly Scan</h4>
-                <p className="text-xs text-slate-500 mt-0.5">City Hospital • 11:30 AM</p>
+              <div className="bg-slate-50 dark:bg-dark-800 p-4 rounded-2xl border-l-4 border-blue-500">
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide block mb-1">In 4 Days</span>
+                <h4 className="font-bold text-slate-900 dark:text-white">Anomaly Scan</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">City Hospital • 11:30 AM</p>
               </div>
             </div>
 
             {/* Learning Module */}
-            <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-2">Learning Module</h3>
-              <p className="text-xs text-slate-500 mb-6">How to prepare for the third trimester transition.</p>
+            <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700 shadow-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2">Learning Module</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">How to prepare for the third trimester transition.</p>
 
-              <div className="aspect-video bg-slate-100 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg text-blue-600 z-10 group-hover:scale-110 transition-transform">
+              <div className="aspect-video bg-slate-100 dark:bg-dark-800 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                <div className="w-12 h-12 bg-white dark:bg-dark-700 rounded-full flex items-center justify-center shadow-lg text-blue-600 dark:text-blue-400 z-10 group-hover:scale-110 transition-transform">
                   <Play size={20} className="ml-1" fill="currentColor" />
                 </div>
-                <div className="absolute inset-0 bg-slate-200/50"></div>
+                <div className="absolute inset-0 bg-slate-200/50 dark:bg-dark-900/50"></div>
               </div>
             </div>
           </div>
@@ -529,32 +558,32 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="mb-2 text-center">
           <span className="text-xs font-bold text-rose-500 uppercase tracking-widest">MODE: FAMILY PERSPECTIVE</span>
-          <h1 className="text-4xl font-display font-extrabold text-slate-900 mt-2">Your Pregnancy Journey</h1>
+          <h1 className="text-4xl font-display font-extrabold text-slate-900 dark:text-white mt-2">Your Pregnancy Journey</h1>
           <div className="flex items-center justify-center gap-2 mt-4">
-            <h2 className="text-2xl font-display font-bold text-slate-700">Welcome, Family!</h2>
+            <h2 className="text-2xl font-display font-bold text-slate-700 dark:text-slate-200">Welcome, Family!</h2>
             <SpeakButton text="Family Perspective. Your Pregnancy Journey. Welcome, Family! Stay updated on Maya's journey and find ways to support." />
           </div>
-          <p className="text-slate-500 mt-2">Stay updated on Maya's journey and find ways to support.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">Stay updated on Maya's journey and find ways to support.</p>
         </div>
 
         {/* Milestone Hero */}
-        <div className="bg-gradient-to-br from-rose-50 to-white rounded-[2.5rem] p-10 border border-rose-100 text-center relative overflow-hidden">
-          <Heart size={300} className="absolute -top-10 -left-10 text-rose-100 opacity-50 rotate-[-15deg]" />
-          <Heart size={200} className="absolute -bottom-10 -right-10 text-rose-100 opacity-50 rotate-[15deg]" />
+        <div className="bg-gradient-to-br from-rose-50 to-white dark:from-rose-900/20 dark:to-dark-900 rounded-[2.5rem] p-10 border border-rose-100 dark:border-rose-900/30 text-center relative overflow-hidden">
+          <Heart size={300} className="absolute -top-10 -left-10 text-rose-100 dark:text-rose-900/20 opacity-50 rotate-[-15deg]" />
+          <Heart size={200} className="absolute -bottom-10 -right-10 text-rose-100 dark:text-rose-900/20 opacity-50 rotate-[15deg]" />
 
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="flex items-center justify-center gap-2">
-              <h3 className="text-2xl font-display font-bold text-rose-800 mb-3">Milestone Alert: 24 Weeks!</h3>
+              <h3 className="text-2xl font-display font-bold text-rose-800 dark:text-rose-300 mb-3">Milestone Alert: 24 Weeks!</h3>
               <SpeakButton text="Milestone Alert: 24 Weeks! The baby is now about the size of an ear of corn and can hear sounds from the outside world!" />
             </div>
-            <p className="text-rose-900/70 text-base leading-relaxed mb-8">
+            <p className="text-rose-900/70 dark:text-rose-200/70 text-base leading-relaxed mb-8">
               The baby is now about the size of an ear of corn and can hear sounds from the outside world!
             </p>
             <div className="flex justify-center gap-4">
               <button className="bg-rose-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-colors flex items-center gap-2">
                 <Heart size={18} fill="currentColor" /> Send Love
               </button>
-              <button className="bg-white text-slate-700 border border-slate-200 px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
+              <button className="bg-white dark:bg-dark-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-dark-700 px-8 py-3 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-dark-700 transition-colors flex items-center gap-2">
                 <Mic size={18} /> Record Voice Note
               </button>
             </div>
@@ -563,45 +592,45 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Support Suggestions */}
-          <div className="bg-white rounded-[2rem] p-8 border border-slate-100">
+          <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700">
             <div className="flex items-center gap-3 mb-6">
               <Info size={20} className="text-blue-500" />
-              <h3 className="font-bold text-slate-900 text-lg">Support Maya Today</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg">Support Maya Today</h3>
             </div>
             <div className="space-y-4">
-              <div className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded flex items-center justify-center font-bold text-xs shrink-0">1</div>
-                <p className="text-sm text-slate-600 leading-relaxed">Ask about her sleep—third trimester is starting soon.</p>
+              <div className="flex gap-4 p-4 rounded-xl bg-slate-50 dark:bg-dark-800 border border-slate-100 dark:border-dark-700">
+                <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded flex items-center justify-center font-bold text-xs shrink-0">1</div>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Ask about her sleep—third trimester is starting soon.</p>
               </div>
-              <div className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded flex items-center justify-center font-bold text-xs shrink-0">2</div>
-                <p className="text-sm text-slate-600 leading-relaxed">Maya mentioned craving traditional homemade Makhana.</p>
+              <div className="flex gap-4 p-4 rounded-xl bg-slate-50 dark:bg-dark-800 border border-slate-100 dark:border-dark-700">
+                <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">Maya mentioned craving traditional homemade Makhana.</p>
               </div>
             </div>
           </div>
 
           {/* Events */}
-          <div className="bg-white rounded-[2rem] p-8 border border-slate-100">
+          <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700">
             <div className="flex items-center gap-3 mb-6">
               <Calendar size={20} className="text-emerald-500" />
-              <h3 className="font-bold text-slate-900 text-lg">Family Events</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg">Family Events</h3>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl">
-                <span className="font-bold text-slate-700 text-sm">Baby Shower Planning</span>
-                <span className="text-xs font-bold text-slate-400">Nov 12</span>
+              <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-dark-800 rounded-xl">
+                <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Baby Shower Planning</span>
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">Nov 12</span>
               </div>
-              <div className="flex justify-between items-center p-4 bg-slate-50 rounded-xl">
-                <span className="font-bold text-slate-700 text-sm">Hospital Visit (Maya)</span>
-                <span className="text-xs font-bold text-slate-400">Dec 01</span>
+              <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-dark-800 rounded-xl">
+                <span className="font-bold text-slate-700 dark:text-slate-300 text-sm">Hospital Visit (Maya)</span>
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">Dec 01</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Photos */}
-        <div className="bg-white rounded-[2rem] p-8 border border-slate-100">
-          <h3 className="font-bold text-slate-900 text-lg mb-6">Latest Shared Photos</h3>
+        <div className="bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700">
+          <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-6">Latest Shared Photos</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               'https://images.unsplash.com/photo-1544126566-475a890b0e53?auto=format&fit=crop&w=400&q=80',
@@ -641,21 +670,21 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
         <div className="mb-4 flex items-start justify-between">
           <div>
             <span className="text-xs font-bold text-rose-500 uppercase tracking-widest">MODE: DOCTOR PERSPECTIVE</span>
-            <h1 className="text-4xl font-display font-extrabold text-slate-900 mt-1">Your Pregnancy Journey</h1>
+            <h1 className="text-4xl font-display font-extrabold text-slate-900 dark:text-white mt-1">Your Pregnancy Journey</h1>
           </div>
           <SpeakButton text="Doctor Perspective. Clinical Dashboard for monitoring patient health and pregnancy progress." />
         </div>
 
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Activity size={24} /></div>
-            <h2 className="text-2xl font-bold font-display text-slate-900">Clinical Dashboard</h2>
+            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg"><Activity size={24} /></div>
+            <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-white">Clinical Dashboard</h2>
           </div>
 
           <div className="flex w-full lg:w-auto gap-4">
             <div className="relative flex-1 lg:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-              <input type="text" placeholder="Search patient..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" />
+              <input type="text" placeholder="Search patient..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-600 bg-white dark:bg-dark-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:placeholder:text-slate-500" />
             </div>
             <button className="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-colors flex items-center gap-2">
               <Bell size={16} /> Alerts (2)
@@ -666,46 +695,46 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar: Active Patients */}
           <div className="lg:w-64 shrink-0 space-y-2">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-2">Active Patients</h3>
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 px-2">Active Patients</h3>
 
-            <div className="bg-blue-50 border border-blue-100 p-3 rounded-2xl flex items-center gap-3 cursor-pointer">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 p-3 rounded-2xl flex items-center gap-3 cursor-pointer">
               <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="Maya" className="w-10 h-10 rounded-full object-cover" />
               <div>
-                <h4 className="font-bold text-slate-900 text-sm">Maya Sharma</h4>
-                <p className="text-[10px] text-slate-500 font-medium">24 Weeks • High Risk</p>
+                <h4 className="font-bold text-slate-900 dark:text-white text-sm">Maya Sharma</h4>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">24 Weeks • High Risk</p>
               </div>
               <div className="w-1 h-8 bg-blue-500 rounded-full ml-auto"></div>
             </div>
 
             {[2, 3, 4].map(i => (
-              <div key={i} className="p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-slate-50 transition-colors opacity-60 hover:opacity-100">
-                <div className="w-10 h-10 rounded-full bg-slate-200"></div>
+              <div key={i} className="p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors opacity-60 hover:opacity-100">
+                <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-dark-700"></div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Patient {i}</h4>
-                  <p className="text-[10px] text-slate-500 font-medium">Routine Checkup</p>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-sm">Patient {i}</h4>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Routine Checkup</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm min-h-[600px]">
+          <div className="flex-1 bg-white dark:bg-dark-900 rounded-[2rem] p-8 border border-slate-100 dark:border-dark-700 shadow-sm min-h-[600px]">
             {/* Patient Header */}
             <div className="flex justify-between items-start mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-dark-800 flex items-center justify-center text-slate-400 dark:text-slate-500">
                   <User size={32} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold font-display text-slate-900">Maya Sharma</h2>
-                  <p className="text-slate-500 text-sm">Age: 28 | LMP: April 12, 2024 | G1P0</p>
+                  <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-white">Maya Sharma</h2>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">Age: 28 | LMP: April 12, 2024 | G1P0</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="p-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
+                <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dark-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dark-700 rounded-xl transition-colors">
                   <MessageCircle size={20} />
                 </button>
-                <button className="p-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">
+                <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dark-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dark-700 rounded-xl transition-colors">
                   <ClipboardList size={20} />
                 </button>
               </div>
@@ -713,38 +742,38 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-rose-50 rounded-2xl p-5 border border-rose-100 relative overflow-hidden">
+              <div className="bg-rose-50 dark:bg-rose-900/20 rounded-2xl p-5 border border-rose-100 dark:border-rose-900/30 relative overflow-hidden">
                 <div className="flex justify-between items-start mb-2">
                   <AlertCircle size={20} className="text-rose-500" />
                   <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">URGENT</span>
                 </div>
-                <span className="text-xs font-bold text-rose-800 uppercase tracking-wide">Blood Sugar</span>
-                <div className="text-3xl font-display font-bold text-slate-900 mt-1">125 <span className="text-sm font-medium text-rose-600">mg/dL</span></div>
-                <p className="text-[10px] text-rose-700 mt-2 font-medium">Spike detected after lunch (Today)</p>
+                <span className="text-xs font-bold text-rose-800 dark:text-rose-300 uppercase tracking-wide">Blood Sugar</span>
+                <div className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-1">125 <span className="text-sm font-medium text-rose-600 dark:text-rose-400">mg/dL</span></div>
+                <p className="text-[10px] text-rose-700 dark:text-rose-300 mt-2 font-medium">Spike detected after lunch (Today)</p>
               </div>
 
-              <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-5 border border-emerald-100 dark:border-emerald-900/30">
                 <TrendingUp size={20} className="text-emerald-500 mb-2" />
-                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide">Weight Gain</span>
-                <div className="text-3xl font-display font-bold text-slate-900 mt-1">+4.2 <span className="text-sm font-medium text-slate-500">kg</span></div>
-                <p className="text-[10px] text-emerald-700 mt-2 font-medium">On track for trimester 2</p>
+                <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">Weight Gain</span>
+                <div className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-1">+4.2 <span className="text-sm font-medium text-slate-500 dark:text-slate-400">kg</span></div>
+                <p className="text-[10px] text-emerald-700 dark:text-emerald-300 mt-2 font-medium">On track for trimester 2</p>
               </div>
 
-              <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-5 border border-blue-100 dark:border-blue-900/30">
                 <Activity size={20} className="text-blue-500 mb-2" />
-                <span className="text-xs font-bold text-blue-800 uppercase tracking-wide">Avg Sleep</span>
-                <div className="text-3xl font-display font-bold text-slate-900 mt-1">7.5 <span className="text-sm font-medium text-slate-500">hrs</span></div>
-                <p className="text-[10px] text-blue-700 mt-2 font-medium">Consistent for last 7 days</p>
+                <span className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wide">Avg Sleep</span>
+                <div className="text-3xl font-display font-bold text-slate-900 dark:text-white mt-1">7.5 <span className="text-sm font-medium text-slate-500 dark:text-slate-400">hrs</span></div>
+                <p className="text-[10px] text-blue-700 dark:text-blue-300 mt-2 font-medium">Consistent for last 7 days</p>
               </div>
             </div>
 
             {/* Chart Section */}
             <div className="mb-8">
-              <h3 className="font-bold text-slate-900 mb-6">Long-term Trend: Blood Sugar</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-6">Long-term Trend: Blood Sugar</h3>
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={bloodSugarTrend}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" strokeOpacity={0.1} />
                     <XAxis
                       dataKey="day"
                       axisLine={false}
@@ -755,6 +784,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                     <YAxis hide domain={[90, 140]} />
                     <Tooltip
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                      itemStyle={{ color: '#000' }}
                     />
                     <Line
                       type="monotone"
@@ -776,13 +806,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
             </div>
 
             {/* Files */}
-            <div className="border-t border-slate-100 pt-8">
-              <h3 className="font-bold text-slate-900 mb-4">Medical Files & Reports</h3>
-              <div className="flex items-center gap-4 p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 bg-rose-50 text-rose-500 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-rose-100 transition-colors">PDF</div>
+            <div className="border-t border-slate-100 dark:border-dark-700 pt-8">
+              <h3 className="font-bold text-slate-900 dark:text-white mb-4">Medical Files & Reports</h3>
+              <div className="flex items-center gap-4 p-4 border border-slate-100 dark:border-dark-700 rounded-xl hover:bg-slate-50 dark:hover:bg-dark-800 transition-colors cursor-pointer group">
+                <div className="w-10 h-10 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-rose-100 dark:group-hover:bg-rose-900/40 transition-colors">PDF</div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Level 2 Ultrasound Scan</h4>
-                  <p className="text-xs text-slate-500">Uploaded 2 days ago</p>
+                  <h4 className="font-bold text-slate-900 dark:text-white text-sm">Level 2 Ultrasound Scan</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Uploaded 2 days ago</p>
                 </div>
               </div>
             </div>
@@ -1132,29 +1162,29 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
         {/* Doctor & Watch Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 relative overflow-hidden flex flex-col justify-between h-full">
+          <div className="lg:col-span-2 bg-white dark:bg-dark-900 rounded-[2rem] p-8 shadow-sm border border-slate-100 dark:border-dark-700 relative overflow-hidden flex flex-col justify-between h-full">
             <div>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-200">
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-600 dark:bg-indigo-700 text-white flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none">
                     <Stethoscope size={28} />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-display font-bold text-slate-900">Doctor's Clinical Summary</h2>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Last Update: Oct 12 by Dr. Aditi Sharma</p>
+                    <h2 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Doctor's Clinical Summary</h2>
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Last Update: Oct 12 by Dr. Aditi Sharma</p>
                   </div>
                   <SpeakButton text="Doctor's Clinical Summary. G1P0 gestation at 24 weeks. Overall clinical status is stable. Fetal growth matches gestational age perfectly. Prescribed instructions: Sleep strictly on the left lateral position. Schedule Glucose Challenge Test. Maintain 3.5 liters daily hydration goal." />
                 </div>
-                <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-2 border border-indigo-100">
+                <div className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-2 border border-indigo-100 dark:border-indigo-900/30">
                   <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
                   Clinical Record
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                  <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                  <div className="bg-slate-50/50 dark:bg-dark-800 rounded-2xl p-6 border border-slate-100 dark:border-dark-700">
                     <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-3 block">Diagnosis & Status</span>
-                    <p className="text-slate-800 font-bold text-lg leading-relaxed">
+                    <p className="text-slate-800 dark:text-slate-200 font-bold text-lg leading-relaxed">
                       G1P0 gestation at 24 weeks. Overall clinical status is <span className="text-emerald-500">STABLE</span>. Fetal growth matches gestational age perfectly.
                     </p>
                   </div>
@@ -1163,15 +1193,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                   <div>
                     <div className="flex items-center gap-2 mb-4">
                       <ClipboardList size={18} className="text-rose-500" />
-                      <span className="text-xs font-bold text-slate-900 uppercase tracking-widest">Prescribed Instructions</span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest">Prescribed Instructions</span>
                     </div>
                     <div className="space-y-3">
                       {["Sleep strictly on the left lateral position.", "Schedule Glucose Challenge Test (GCT).", "Maintain 3.5L daily hydration goal."].map((item, i) => (
-                        <div key={i} className="flex items-start gap-4 p-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-indigo-100 transition-colors">
-                          <div className="w-5 h-5 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <div key={i} className="flex items-start gap-4 p-3 bg-white dark:bg-dark-800 border border-slate-100 dark:border-dark-700 rounded-2xl shadow-sm hover:border-indigo-100 dark:hover:border-indigo-900/50 transition-colors">
+                          <div className="w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 mt-0.5">
                             <CheckCircle2 size={12} />
                           </div>
-                          <span className="text-sm font-bold text-slate-700 leading-snug">{item}</span>
+                          <span className="text-sm font-bold text-slate-700 dark:text-slate-300 leading-snug">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -1179,12 +1209,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                 </div>
               </div>
             </div>
-            <div className="mt-6 pt-6 border-t border-slate-50">
+            <div className="mt-6 pt-6 border-t border-slate-50 dark:border-dark-700">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest">Clinical Observations</span>
                 <SpeakButton text="Clinical Observations. Fetal Heart Rate baseline at 145 beats per minute with moderate variability. Patient reports mild lumbar strain. Blood pressure is within normal ranges at 110 over 70 millimeters of mercury." size={12} />
               </div>
-              <p className="text-slate-600 text-sm leading-relaxed">
+              <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                 Fetal Heart Rate baseline at 145 bpm with moderate variability. Patient reports mild lumbar strain. Blood pressure is within normal ranges (110/70 mmHg).
               </p>
             </div>
@@ -1192,7 +1222,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
           <div className="lg:col-span-1 flex flex-col gap-6">
             {/* How are you feeling? Card */}
-            <div className="bg-rose-900 rounded-[2rem] p-10 h-full flex flex-col">
+            <div className="bg-rose-900 dark:bg-rose-950 rounded-[2rem] p-10 h-full flex flex-col">
               <div className="flex items-start justify-between gap-2">
                 <h3 className="text-white text-3xl font-bold mb-3">How are you feeling?</h3>
                 <SpeakButton text="How are you feeling? It's normal to feel a mix of emotions right now. Tracking helps. You can select Sad, Neutral, Good, or Great, and describe what's on your mind." className="text-white border-white/30 bg-white/10 hover:bg-white/20" />
@@ -1230,6 +1260,154 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Cravings Tracker */}
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] p-6 lg:p-8 border border-amber-100 shadow-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center shadow-sm">
+                <Utensils size={28} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-display font-bold text-slate-900">Cravings Tracker</h2>
+                <p className="text-sm text-slate-500">Track your pregnancy cravings and patterns</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowCravingInput(!showCravingInput)}
+              className="px-5 py-2.5 bg-amber-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-amber-200 hover:bg-amber-600 transition-all flex items-center gap-2"
+            >
+              <Plus size={16} /> Add Craving
+            </button>
+          </div>
+
+          {/* Add New Craving Input */}
+          {showCravingInput && (
+            <div className="bg-white rounded-2xl p-5 mb-6 border border-amber-100 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">What are you craving?</label>
+                  <input
+                    type="text"
+                    value={newCraving}
+                    onChange={(e) => setNewCraving(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addCraving()}
+                    placeholder="e.g., Pickles, Ice cream, Spicy food..."
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  />
+                </div>
+                <div className="md:w-48">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Intensity</label>
+                  <div className="flex gap-2">
+                    {(['mild', 'moderate', 'strong'] as const).map((level) => (
+                      <button
+                        key={level}
+                        onClick={() => setNewCravingIntensity(level)}
+                        className={`flex-1 py-3 rounded-xl text-xs font-bold capitalize transition-all ${newCravingIntensity === level
+                          ? level === 'mild' ? 'bg-green-500 text-white'
+                            : level === 'moderate' ? 'bg-amber-500 text-white'
+                              : 'bg-red-500 text-white'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                          }`}
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-end">
+                  <button
+                    onClick={addCraving}
+                    disabled={!newCraving.trim()}
+                    className="px-6 py-3 bg-amber-500 text-white rounded-xl text-sm font-bold hover:bg-amber-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Cravings List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cravings.map((craving) => (
+              <div
+                key={craving.id}
+                className={`bg-white rounded-2xl p-4 border transition-all hover:shadow-md ${craving.satisfied ? 'border-green-200 bg-green-50/50' : 'border-amber-100'
+                  }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">
+                      {craving.food.toLowerCase().includes('pickle') ? '🥒' :
+                        craving.food.toLowerCase().includes('ice') ? '🍦' :
+                          craving.food.toLowerCase().includes('spicy') ? '🌶️' :
+                            craving.food.toLowerCase().includes('chocolate') ? '🍫' :
+                              craving.food.toLowerCase().includes('fruit') ? '🍎' :
+                                craving.food.toLowerCase().includes('sweet') ? '🍬' :
+                                  craving.food.toLowerCase().includes('sour') ? '🍋' :
+                                    craving.food.toLowerCase().includes('pizza') ? '🍕' :
+                                      craving.food.toLowerCase().includes('burger') ? '🍔' :
+                                        craving.food.toLowerCase().includes('fries') ? '🍟' :
+                                          craving.food.toLowerCase().includes('cake') ? '🍰' :
+                                            craving.food.toLowerCase().includes('coffee') ? '☕' : '🍽️'}
+                    </span>
+                    <div>
+                      <h4 className="font-bold text-slate-900">{craving.food}</h4>
+                      <p className="text-xs text-slate-400">
+                        {new Date(craving.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => deleteCraving(craving.id)}
+                    className="text-slate-300 hover:text-red-500 transition-colors"
+                  >
+                    <Minus size={16} />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${craving.intensity === 'mild' ? 'bg-green-100 text-green-700' :
+                    craving.intensity === 'moderate' ? 'bg-amber-100 text-amber-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                    {craving.intensity}
+                  </span>
+                  <button
+                    onClick={() => toggleCravingSatisfied(craving.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${craving.satisfied
+                      ? 'bg-green-500 text-white'
+                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                      }`}
+                  >
+                    <Check size={12} />
+                    {craving.satisfied ? 'Satisfied' : 'Mark Satisfied'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Cravings Summary */}
+          {cravings.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-amber-200">
+              <div className="flex flex-wrap gap-6 text-center">
+                <div className="flex-1 min-w-[120px]">
+                  <span className="text-3xl font-display font-bold text-slate-900">{cravings.length}</span>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Total Cravings</p>
+                </div>
+                <div className="flex-1 min-w-[120px]">
+                  <span className="text-3xl font-display font-bold text-green-600">{cravings.filter(c => c.satisfied).length}</span>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Satisfied</p>
+                </div>
+                <div className="flex-1 min-w-[120px]">
+                  <span className="text-3xl font-display font-bold text-red-500">{cravings.filter(c => c.intensity === 'strong').length}</span>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Strong Cravings</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Pregnancy Calendar & Fluid */}
@@ -1714,7 +1892,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
               <Wind size={24} />
             </div>
             <h2 className="text-2xl font-bold font-display text-slate-900">Environmental Safety</h2>
-            <SpeakButton text={aqiState.data 
+            <SpeakButton text={aqiState.data
               ? `Environmental Safety. Current Air Quality Index is ${aqiState.data.aqi}, which is ${getAQICategory(aqiState.data.aqi).label}. ${getBabySafetyGuidance(aqiState.data.aqi).message}. Location: ${aqiState.data.station}. Dominant pollutant: ${formatPollutant(aqiState.data.dominantPollutant)}.`
               : "Environmental Safety. Air quality awareness for infants: In many Indian cities, carrying infants in high AQI without coverups is dangerously normalized. Babies breathe 3 times faster than adults."
             } />
@@ -1753,20 +1931,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                 <div className="flex items-center gap-6">
                   <div className="text-center">
                     <div className="text-[10px] text-emerald-300 uppercase tracking-widest font-bold mb-1">Live AQI</div>
-                    <div className={`text-6xl font-bold font-display leading-none ${
-                      aqiState.data.aqi <= 50 ? 'text-emerald-400' :
+                    <div className={`text-6xl font-bold font-display leading-none ${aqiState.data.aqi <= 50 ? 'text-emerald-400' :
                       aqiState.data.aqi <= 100 ? 'text-yellow-400' :
-                      aqiState.data.aqi <= 150 ? 'text-orange-400' :
-                      aqiState.data.aqi <= 200 ? 'text-red-400' :
-                      'text-purple-400'
-                    }`}>
+                        aqiState.data.aqi <= 150 ? 'text-orange-400' :
+                          aqiState.data.aqi <= 200 ? 'text-red-400' :
+                            'text-purple-400'
+                      }`}>
                       {aqiState.data.aqi}
                     </div>
                     <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mt-2 ${getAQICategory(aqiState.data.aqi).color} text-white`}>
                       {getAQICategory(aqiState.data.aqi).label}
                     </div>
                   </div>
-                  
+
                   {/* Divider */}
                   <div className="hidden lg:block w-px h-20 bg-white/20"></div>
                 </div>
@@ -1774,15 +1951,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                 {/* Right: Info and Safety */}
                 <div className="flex-1">
                   {/* Safety Guidance */}
-                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-4 ${
-                    getBabySafetyGuidance(aqiState.data.aqi).icon === 'safe'
-                      ? 'bg-emerald-500/20 border border-emerald-400/30'
-                      : getBabySafetyGuidance(aqiState.data.aqi).icon === 'caution'
-                        ? 'bg-yellow-500/20 border border-yellow-400/30'
-                        : getBabySafetyGuidance(aqiState.data.aqi).icon === 'warning'
-                          ? 'bg-orange-500/20 border border-orange-400/30'
-                          : 'bg-red-500/20 border border-red-400/30'
-                  }`}>
+                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-4 ${getBabySafetyGuidance(aqiState.data.aqi).icon === 'safe'
+                    ? 'bg-emerald-500/20 border border-emerald-400/30'
+                    : getBabySafetyGuidance(aqiState.data.aqi).icon === 'caution'
+                      ? 'bg-yellow-500/20 border border-yellow-400/30'
+                      : getBabySafetyGuidance(aqiState.data.aqi).icon === 'warning'
+                        ? 'bg-orange-500/20 border border-orange-400/30'
+                        : 'bg-red-500/20 border border-red-400/30'
+                    }`}>
                     {getBabySafetyGuidance(aqiState.data.aqi).icon === 'safe' && <CheckCircle2 size={16} />}
                     {getBabySafetyGuidance(aqiState.data.aqi).icon === 'caution' && <AlertTriangle size={16} />}
                     {getBabySafetyGuidance(aqiState.data.aqi).icon === 'warning' && <AlertTriangle size={16} />}

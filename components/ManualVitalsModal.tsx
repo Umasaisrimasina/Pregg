@@ -66,7 +66,7 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
             <div
-                className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-dark-900 w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 ring-1 ring-slate-900/5 dark:ring-white/10"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -89,11 +89,11 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
                 </div>
 
                 {/* Content */}
-                <div className="p-6 max-h-[60vh] overflow-y-auto">
+                <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
                     <div className="grid grid-cols-2 gap-4">
                         {METRIC_CONFIG.map(({ key, label, unit, icon: Icon, color, min, max, step }) => (
                             <div key={key} className="space-y-2">
-                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                                <label className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                                     <Icon size={14} className={`text-${color}-500`} />
                                     {label}
                                 </label>
@@ -105,9 +105,9 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
                                         min={min}
                                         max={max}
                                         step={step}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 pr-16 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 transition-all"
+                                        className="w-full bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 rounded-xl py-3 px-4 pr-16 text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 dark:focus:border-rose-700 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 dark:text-slate-500">
                                         {unit}
                                     </span>
                                 </div>
@@ -116,8 +116,8 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
                     </div>
 
                     {/* Blood Pressure Section */}
-                    <div className="mt-6 pt-6 border-t border-slate-100">
-                        <label className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider mb-3">
+                    <div className="mt-6 pt-6 border-t border-slate-100 dark:border-dark-700">
+                        <label className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
                             <Thermometer size={14} className="text-blue-500" />
                             Blood Pressure
                         </label>
@@ -130,11 +130,11 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
                                     onChange={(e) => handleChange('systolicBP', e.target.value)}
                                     min={70}
                                     max={200}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 transition-all"
+                                    className="w-full bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 rounded-xl py-3 px-4 text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 dark:focus:border-rose-700 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                 />
-                                <span className="text-xs text-slate-400 mt-1 block text-center">Systolic</span>
+                                <span className="text-xs text-slate-400 dark:text-slate-500 mt-1 block text-center">Systolic</span>
                             </div>
-                            <div className="flex items-center text-slate-300 font-bold text-xl pb-6">/</div>
+                            <div className="flex items-center text-slate-300 dark:text-slate-600 font-bold text-xl pb-6">/</div>
                             <div className="flex-1">
                                 <input
                                     type="number"
@@ -143,20 +143,20 @@ export const ManualVitalsModal: React.FC<ManualVitalsModalProps> = ({ isOpen, on
                                     onChange={(e) => handleChange('diastolicBP', e.target.value)}
                                     min={40}
                                     max={130}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 transition-all"
+                                    className="w-full bg-slate-50 dark:bg-dark-800 border border-slate-200 dark:border-dark-700 rounded-xl py-3 px-4 text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-300 dark:focus:border-rose-700 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                                 />
-                                <span className="text-xs text-slate-400 mt-1 block text-center">Diastolic</span>
+                                <span className="text-xs text-slate-400 dark:text-slate-500 mt-1 block text-center">Diastolic</span>
                             </div>
-                            <div className="flex items-center text-xs text-slate-400 font-bold pb-6">mmHg</div>
+                            <div className="flex items-center text-xs text-slate-400 dark:text-slate-500 font-bold pb-6">mmHg</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <div className="p-6 bg-slate-50 dark:bg-dark-800 border-t border-slate-100 dark:border-dark-700 flex gap-3">
                     <button
                         onClick={handleReset}
-                        className="flex-1 py-3 px-4 border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-white transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 py-3 px-4 border border-slate-200 dark:border-dark-600 text-slate-600 dark:text-slate-300 rounded-xl font-bold text-sm hover:bg-white dark:hover:bg-dark-700 transition-colors flex items-center justify-center gap-2"
                     >
                         <RotateCcw size={16} />
                         Reset

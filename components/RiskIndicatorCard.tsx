@@ -1,26 +1,30 @@
-/**
- * RiskIndicatorCard.tsx
- * 
- * Card showing individual risk condition status with explanation.
- * Warm, pregnancy-friendly design with soft colors.
- */
-
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Heart, Droplets, Brain } from 'lucide-react';
 import { RiskIndicator } from '../services/riskEngine';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface RiskIndicatorCardProps {
     indicator: RiskIndicator;
 }
 
-// Warm color palette
-const COLORS = {
+// Warm color palette - Light Mode
+const COLORS_LIGHT = {
     mint: '#a8e6cf',
     mintLight: '#d4f5e6',
     peach: '#ffd3b6',
     peachLight: '#ffe8d9',
     rose: '#ffaaa5',
     roseLight: '#ffd4d1'
+};
+
+// Warm color palette - Dark Mode (Deep, rich tones)
+const COLORS_DARK = {
+    mint: '#059669', // Emerald 600
+    mintLight: 'rgba(5, 150, 105, 0.1)', // Emerald 900/10
+    peach: '#d97706', // Amber 600
+    peachLight: 'rgba(217, 119, 6, 0.1)', // Amber 900/10
+    rose: '#be123c', // Rose 700
+    roseLight: 'rgba(190, 18, 60, 0.1)' // Rose 900/10
 };
 
 // Friendly names for conditions
@@ -42,39 +46,41 @@ const CONDITION_NAMES: Record<string, { name: string; icon: React.ReactNode; des
     }
 };
 
-// Get colors based on level
-const getLevelColors = (level: string) => {
+// Get colors based on level and theme
+const getLevelColors = (level: string, theme: 'light' | 'dark') => {
+    const palette = theme === 'dark' ? COLORS_DARK : COLORS_LIGHT;
+
     switch (level) {
         case 'low':
             return {
-                bg: COLORS.mintLight,
-                border: COLORS.mint,
-                iconBg: COLORS.mint,
-                text: '#2d6a4f',
+                bg: palette.mintLight,
+                border: palette.mint,
+                iconBg: theme === 'dark' ? 'rgba(5, 150, 105, 0.2)' : palette.mint,
+                text: theme === 'dark' ? '#34d399' : '#2d6a4f',
                 label: 'Stable'
             };
         case 'moderate':
             return {
-                bg: COLORS.peachLight,
-                border: COLORS.peach,
-                iconBg: COLORS.peach,
-                text: '#9c6644',
+                bg: palette.peachLight,
+                border: palette.peach,
+                iconBg: theme === 'dark' ? 'rgba(217, 119, 6, 0.2)' : palette.peach,
+                text: theme === 'dark' ? '#fbbf24' : '#9c6644',
                 label: 'Some Changes'
             };
         case 'high':
             return {
-                bg: COLORS.roseLight,
-                border: COLORS.rose,
-                iconBg: COLORS.rose,
-                text: '#a4494a',
+                bg: palette.roseLight,
+                border: palette.rose,
+                iconBg: theme === 'dark' ? 'rgba(190, 18, 60, 0.2)' : palette.rose,
+                text: theme === 'dark' ? '#fb7185' : '#a4494a',
                 label: 'Needs Attention'
             };
         default:
             return {
-                bg: '#f1f5f9',
-                border: '#e2e8f0',
-                iconBg: '#e2e8f0',
-                text: '#64748b',
+                bg: theme === 'dark' ? '#1e293b' : '#f1f5f9',
+                border: theme === 'dark' ? '#334155' : '#e2e8f0',
+                iconBg: theme === 'dark' ? '#334155' : '#e2e8f0',
+                text: theme === 'dark' ? '#94a3b8' : '#64748b',
                 label: 'Unknown'
             };
     }
@@ -82,8 +88,9 @@ const getLevelColors = (level: string) => {
 
 export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { theme } = useTheme();
 
-    const colors = getLevelColors(indicator.level);
+    const colors = getLevelColors(indicator.level, theme);
     const conditionInfo = CONDITION_NAMES[indicator.condition] || {
         name: indicator.condition,
         icon: <Heart size={18} />,
@@ -93,12 +100,16 @@ export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator 
     return (
         <div
             className="rounded-2xl overflow-hidden transition-all shadow-sm"
-            style={{ backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.border }}
+            style={{
+                backgroundColor: colors.bg,
+                borderWidth: 1,
+                borderColor: colors.border
+            }}
         >
             {/* Header - Always visible */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full p-4 flex items-center justify-between text-left hover:bg-white/30 transition-colors"
+                className="w-full p-4 flex items-center justify-between text-left hover:bg-white/30 dark:hover:bg-black/20 transition-colors"
             >
                 <div className="flex items-center gap-3">
                     <div
@@ -108,8 +119,8 @@ export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator 
                         {conditionInfo.icon}
                     </div>
                     <div>
-                        <h4 className="font-bold text-slate-700 text-sm">{conditionInfo.name}</h4>
-                        <p className="text-xs text-slate-500">{conditionInfo.description}</p>
+                        <h4 className="font-bold text-slate-700 dark:text-slate-200 text-sm">{conditionInfo.name}</h4>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{conditionInfo.description}</p>
                     </div>
                 </div>
 
@@ -126,10 +137,10 @@ export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator 
 
             {/* Expanded content */}
             {isExpanded && (
-                <div className="px-4 pb-4 space-y-3 border-t border-white/50 pt-3">
+                <div className="px-4 pb-4 space-y-3 border-t border-white/50 dark:border-white/10 pt-3">
                     {/* Explanation */}
-                    <div className="bg-white/60 rounded-xl p-3">
-                        <p className="text-sm text-slate-600 leading-relaxed">
+                    <div className="bg-white/60 dark:bg-black/20 rounded-xl p-3">
+                        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                             {indicator.explanation}
                         </p>
                     </div>
@@ -137,12 +148,12 @@ export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator 
                     {/* Triggers (if any) */}
                     {indicator.triggers.length > 0 && (
                         <div>
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide mb-2 block">
+                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2 block">
                                 What We Noticed
                             </span>
                             <ul className="space-y-1">
                                 {indicator.triggers.map((trigger, i) => (
-                                    <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
+                                    <li key={i} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
                                         <span
                                             className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
                                             style={{ backgroundColor: colors.iconBg }}
@@ -162,7 +173,7 @@ export const RiskIndicatorCard: React.FC<RiskIndicatorCardProps> = ({ indicator 
                         <span className="text-[10px] font-bold uppercase tracking-wide mb-1 block" style={{ color: colors.text }}>
                             Our Suggestion
                         </span>
-                        <p className="text-sm font-medium text-slate-700">
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                             {indicator.recommendation}
                         </p>
                     </div>
