@@ -193,15 +193,15 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="relative z-10 max-w-lg">
-          <h1 className="text-4xl lg:text-5xl font-display font-extrabold mb-6 leading-tight">
+          <h1 className="text-4xl lg:text-5xl font-display font-extrabold mb-6 leading-tight text-white drop-shadow-sm">
             Your companion for every step of the journey.
           </h1>
-          <p className="text-dm-muted-fg text-lg leading-relaxed">
+          <p className="text-white/90 text-lg leading-relaxed font-medium drop-shadow-sm">
             From pre-conception nutrition to baby milestones, we provide the science-backed tools you need to thrive.
           </p>
         </div>
 
-        <div className="relative z-10 hidden lg:flex gap-8 text-sm font-medium text-dm-muted-fg">
+        <div className="relative z-10 hidden lg:flex gap-8 text-sm font-medium text-white/80">
           <span>© 2024 PreConceive</span>
           <span>Privacy Policy</span>
           <span>Terms</span>
@@ -305,11 +305,11 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                           className={`
                           flex flex-col items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all
                           ${isActive
-                              ? 'border-slate-900 bg-dark-800 text-slate-900 dark:text-dm-foreground'
-                              : 'border-slate-100 bg-white text-slate-400 hover:border-dark-700 hover:text-slate-600'}
+                              ? 'border-slate-900 bg-dark-800 text-slate-900 dark:text-dm-foreground dark:border-dm-foreground'
+                              : 'border-slate-100 bg-white dark:bg-dm-card dark:border-dm-border text-slate-400 dark:text-dm-muted-fg hover:border-dark-700 dark:hover:border-dm-foreground hover:text-slate-600 dark:hover:text-dm-foreground'}
                         `}
                         >
-                          <Icon size={20} className={isActive ? 'text-slate-900 dark:text-dm-foreground' : 'text-slate-400'} />
+                          <Icon size={20} className={isActive ? 'text-slate-900 dark:text-dm-foreground' : 'text-slate-400 dark:text-dm-muted-fg'} />
                           <span className="text-[10px] font-bold uppercase tracking-wide">{r.label}</span>
                         </button>
                       );
@@ -338,8 +338,8 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                             onClick={() => setSelectedPhase(p.id)}
                             className={`cursor-pointer rounded-xl p-3 border-2 transition-all flex flex-col gap-2 relative overflow-hidden
                            ${selectedPhase === p.id
-                                ? `border-${PHASE_CONFIG[p.id].theme}-500 bg-${PHASE_CONFIG[p.id].theme}-50`
-                                : 'border-slate-100 bg-white hover:border-dark-700'}
+                                ? `border-${PHASE_CONFIG[p.id].theme}-500 bg-${PHASE_CONFIG[p.id].theme}-50 dark:bg-${PHASE_CONFIG[p.id].theme}-900/20`
+                                : 'border-slate-100 bg-white dark:bg-dm-card dark:border-dm-border hover:border-dark-700 dark:hover:border-dm-foreground'}
                          `}
                           >
                             {selectedPhase === p.id && (
@@ -452,7 +452,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     <div className="w-full border-t border-slate-100 dark:border-dm-border"></div>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-slate-400 font-bold tracking-wider">Or continue with</span>
+                    <span className="bg-white dark:bg-dm-background px-2 text-slate-400 dark:text-dm-muted-fg font-bold tracking-wider">Or continue with</span>
                   </div>
                 </div>
 
@@ -460,7 +460,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={isLoading}
-                  className="w-full bg-white border-2 border-slate-100 text-slate-700 font-bold py-4 rounded-xl hover:bg-slate-50 dark:hover:bg-dm-muted transition-all flex items-center justify-center gap-3"
+                  className="w-full bg-white dark:bg-dm-card border-2 border-slate-100 dark:border-dm-border text-slate-700 dark:text-dm-foreground font-bold py-4 rounded-xl hover:bg-slate-50 dark:hover:bg-dm-border transition-all flex items-center justify-center gap-3"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
