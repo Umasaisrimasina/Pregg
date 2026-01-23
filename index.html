@@ -13,15 +13,23 @@
   <!-- Dark Matter Fonts: Geist Mono + JetBrains Mono -->
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500,600,700&display=swap" rel="stylesheet">
+  <!-- Geist Font (Local) -->
+  <style>
+    @font-face {
+      font-family: 'Geist';
+      src: url('/Geist/Geist-VariableFont_wght.ttf') format('truetype');
+      font-weight: 100 900;
+      font-display: swap;
+    }
+  </style>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Geist Mono', 'ui-monospace', 'monospace'],
-            display: ['Geist Mono', 'ui-monospace', 'monospace'],
+            sans: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['Geist', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {

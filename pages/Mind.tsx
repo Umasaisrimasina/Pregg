@@ -19,9 +19,9 @@ const STORAGE_KEY = 'generic_mind_checkins';
 // Mood options
 type MoodType = 'rough' | 'okay' | 'good';
 const moodToEmoji: Record<MoodType, string> = {
-  'rough': '˜ž',
-  'okay': '˜',
-  'good': '˜Š'
+  'rough': '😔',
+  'okay': '😐',
+  'good': '😊'
 };
 
 const moodToScore: Record<MoodType, number> = {

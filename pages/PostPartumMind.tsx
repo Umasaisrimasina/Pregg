@@ -112,7 +112,7 @@ export const PostPartumMind: React.FC<PageProps> = ({ phase }) => {
 
   // Daily Check-in State (Sentiment Analysis)
   const [checkInText, setCheckInText] = useState('');
-  const [checkInEmoji, setCheckInEmoji] = useState('˜Š');
+  const [checkInEmoji, setCheckInEmoji] = useState('😊');
   const [isAnalyzingCheckIn, setIsAnalyzingCheckIn] = useState(false);
   const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(() => {
     const stored = getCheckIns();
@@ -124,7 +124,7 @@ export const PostPartumMind: React.FC<PageProps> = ({ phase }) => {
   // Check for safety alerts
   const safetyAlert = detectNegativeStreak(checkIns, 3);
 
-  const availableEmojis = ['˜¢', '˜ž', '˜', '™‚', '˜Š', '˜„', '¥°'];
+  const availableEmojis = ['�', '😔', '😐', '😌', '😊', '🤩', '🤗'];
 
   // Live sentiment preview state
   const [livePreviewSentiment, setLivePreviewSentiment] = useState<SentimentLabel | null>(null);
@@ -253,13 +253,13 @@ export const PostPartumMind: React.FC<PageProps> = ({ phase }) => {
   // Emoji to mood score mapping (0-100 scale)
   const emojiToMoodScore = (emoji: string): number => {
     const emojiScores: { [key: string]: number } = {
-      '˜Š': 90,  // Happy
-      '˜Œ': 75,  // Calm
-      '˜': 50,  // Neutral
-      '˜ž': 30,  // Sad
-      '˜¢': 15,  // Crying
-      '˜°': 20,  // Anxious
-      '˜¡': 25   // Angry
+      '😊': 90,  // Happy
+      '😌': 75,  // Calm
+      '😐': 50,  // Neutral
+      '😔': 30,  // Sad
+      '😢': 15,  // Crying
+      '😰': 20,  // Anxious
+      '😠': 25   // Angry
     };
     return emojiScores[emoji] || 50;
   };

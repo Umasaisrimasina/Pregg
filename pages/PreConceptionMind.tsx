@@ -18,9 +18,9 @@ const STORAGE_KEY = 'preconception_mind_checkins';
 // Mood options
 type MoodType = 'rough' | 'okay' | 'good';
 const moodToEmoji: Record<MoodType, string> = {
-  'rough': '˜ž',
-  'okay': '˜',
-  'good': '˜Š'
+  'rough': '😔',
+  'okay': '😐',
+  'good': '😊'
 };
 
 const moodToScore: Record<MoodType, number> = {
@@ -233,8 +233,8 @@ export const PreConceptionMind: React.FC = () => {
                       key={i}
                       onClick={() => toggleFactor(tag)}
                       className={`px-4 py-2 rounded-full text-sm border transition-colors ${selectedFactors.includes(tag)
-                          ? 'bg-primary-50 border-primary-200 text-primary-700 font-medium'
-                          : 'border-dark-700 text-slate-600 hover:border-primary-200'
+                        ? 'bg-primary-50 border-primary-200 text-primary-700 font-medium'
+                        : 'border-dark-700 text-slate-600 hover:border-primary-200'
                         }`}
                     >
                       {tag}
@@ -298,8 +298,8 @@ export const PreConceptionMind: React.FC = () => {
               {/* Success/Mismatch Alert */}
               {showSuccess && lastResult && (
                 <div className={`mt-6 p-4 rounded-xl border ${lastResult.mismatch
-                    ? 'bg-amber-50 border-amber-200'
-                    : 'bg-green-50 border-green-200'
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-green-50 border-green-200'
                   }`}>
                   <div className="flex items-start gap-3">
                     {lastResult.mismatch ? (

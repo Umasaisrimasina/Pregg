@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid, Dot, BarChart, Bar } from 'recharts';
 import { Activity, ArrowRight, CheckCircle2, AlertCircle, Calendar, Scale, Moon, Milk, Plus, Clock, Sparkles, Send, Heart, Shield, Lock, Stethoscope, ClipboardList, Watch, Smartphone, Cloud, Link2, MoreHorizontal, Info, Check, Wind, Brain, Volume2, Droplets, Minus, MapPin, Smile, Meh, Frown, Baby, Utensils, FlaskConical, Tv, ShieldCheck, Zap, Flame, Users, HeartHandshake, CheckSquare, ChefHat, ShoppingCart, MessageCircle, Play, Lightbulb, Camera, Mic, Gift, Search, Bell, FileText, AlertTriangle, TrendingUp, User, ChevronRight, RefreshCw, SmartphoneNfc, Loader2 } from 'lucide-react';
 import { AppPhase, UserRole } from '../types';
@@ -1232,19 +1232,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
               <div className="flex flex-col gap-3 mb-8">
                 <div className="flex gap-4">
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">˜¢</span>
+                    <span className="text-4xl">😢</span>
                     <span className="text-primary-200 text-sm font-medium">Sad</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">˜</span>
+                    <span className="text-4xl">😐</span>
                     <span className="text-primary-200 text-sm font-medium">Neutral</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">™‚</span>
+                    <span className="text-4xl">😊</span>
                     <span className="text-primary-200 text-sm font-medium">Good</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">¤©</span>
+                    <span className="text-4xl">🤩</span>
                     <span className="text-primary-200 text-sm font-medium">Great</span>
                   </button>
                 </div>
@@ -1340,18 +1340,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">
-                      {craving.food.toLowerCase().includes('pickle') ? '¥’' :
-                        craving.food.toLowerCase().includes('ice') ? '¦' :
-                          craving.food.toLowerCase().includes('spicy') ? 'Œ¶ï¸' :
-                            craving.food.toLowerCase().includes('chocolate') ? '«' :
-                              craving.food.toLowerCase().includes('fruit') ? 'Ž' :
-                                craving.food.toLowerCase().includes('sweet') ? '¬' :
-                                  craving.food.toLowerCase().includes('sour') ? '‹' :
-                                    craving.food.toLowerCase().includes('pizza') ? '•' :
-                                      craving.food.toLowerCase().includes('burger') ? '”' :
-                                        craving.food.toLowerCase().includes('fries') ? 'Ÿ' :
-                                          craving.food.toLowerCase().includes('cake') ? '°' :
-                                            craving.food.toLowerCase().includes('coffee') ? '˜•' : '½ï¸'}
+                      {craving.food.toLowerCase().includes('pickle') ? '🥒' :
+                        craving.food.toLowerCase().includes('ice') ? '🍦' :
+                          craving.food.toLowerCase().includes('spicy') ? '🌶️' :
+                            craving.food.toLowerCase().includes('chocolate') ? '🍫' :
+                              craving.food.toLowerCase().includes('fruit') ? '🍎' :
+                                craving.food.toLowerCase().includes('sweet') ? '🍬' :
+                                  craving.food.toLowerCase().includes('sour') ? '🍋' :
+                                    craving.food.toLowerCase().includes('pizza') ? '🍕' :
+                                      craving.food.toLowerCase().includes('burger') ? '🍔' :
+                                        craving.food.toLowerCase().includes('fries') ? '🍟' :
+                                          craving.food.toLowerCase().includes('cake') ? '🍰' :
+                                            craving.food.toLowerCase().includes('coffee') ? '☕' : '🍽️'}
                     </span>
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-dm-foreground">{craving.food}</h4>
@@ -1614,7 +1614,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
               <div className="flex flex-col gap-2 mb-6">
                 <div className="flex gap-4">
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">
-                    <span className="text-3xl">˜¢</span>
+                    <span className="text-3xl">😢</span>
                     <span className="text-secondary-200 text-xs font-medium">Sad</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">
@@ -1622,11 +1622,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                     <span className="text-secondary-200 text-xs font-medium">Neutral</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">
-                    <span className="text-3xl">™‚</span>
+                    <span className="text-3xl">😊</span>
                     <span className="text-secondary-200 text-xs font-medium">Good</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">
-                    <span className="text-3xl">¤©</span>
+                    <span className="text-3xl">🤩</span>
                     <span className="text-secondary-200 text-xs font-medium">Great</span>
                   </button>
                 </div>
