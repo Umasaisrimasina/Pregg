@@ -1236,7 +1236,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                     <span className="text-primary-200 text-sm font-medium">Sad</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">😐</span>
+                    <Meh size={40} className="text-amber-400" />
                     <span className="text-primary-200 text-sm font-medium">Neutral</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
@@ -1618,7 +1618,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                     <span className="text-secondary-200 text-xs font-medium">Sad</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">
-                    <span className="text-3xl">˜</span>
+                    <Meh size={32} className="text-amber-400" />
                     <span className="text-secondary-200 text-xs font-medium">Neutral</span>
                   </button>
                   <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-secondary-800/50 hover:bg-secondary-700 transition-colors">

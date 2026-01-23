@@ -124,7 +124,7 @@ export const PostPartumMind: React.FC<PageProps> = ({ phase }) => {
   // Check for safety alerts
   const safetyAlert = detectNegativeStreak(checkIns, 3);
 
-  const availableEmojis = ['�', '😔', '😐', '😌', '😊', '🤩', '🤗'];
+  const availableEmojis = ['😢', '😔', '😐', '😌', '😊', '🤩', '🤗']; //'�', '😔', '😐', '😌', '😊', '🤩', '🤗'];
 
   // Live sentiment preview state
   const [livePreviewSentiment, setLivePreviewSentiment] = useState<SentimentLabel | null>(null);

@@ -93,7 +93,7 @@ export const CycleCalendar: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-50 dark:bg-slate-50 dark:bg-dm-muted rounded-2xl p-4 flex flex-col items-center justify-center text-center">
               <span className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase mb-1">Basal Temp</span>
-              <span className="text-xl font-display font-bold text-slate-900 dark:text-dm-foreground">36.5Ãƒ€šÃ‚°C</span>
+              <span className="text-xl font-display font-bold text-slate-900 dark:text-dm-foreground">36.5°C</span>
             </div>
             <div className="bg-slate-50 dark:bg-slate-50 dark:bg-dm-muted rounded-2xl p-4 flex flex-col items-center justify-center text-center">
               <span className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase mb-1">Fertility</span>

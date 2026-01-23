@@ -367,7 +367,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     <label className="block text-sm font-bold text-slate-700 mb-1.5">Password</label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 dark:text-slate-500" size={18} />
-                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-slate-50 dark:bg-dm-muted border border-slate-100 dark:border-dm-border rounded-lg py-3 pl-10 pr-4 text-slate-900 dark:text-dm-foreground focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" placeholder="€¢€¢€¢€¢€¢€¢€¢€¢" required />
+                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-slate-50 dark:bg-dm-muted border border-slate-100 dark:border-dm-border rounded-lg py-3 pl-10 pr-4 text-slate-900 dark:text-dm-foreground focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" placeholder="••••••••" required />
                     </div>
                   </div>
                 </div>
