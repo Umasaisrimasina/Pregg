@@ -229,7 +229,7 @@ export const PostPartumEducation: React.FC = () => {
         </div>
         <div className="mt-6 bg-white dark:bg-dm-card rounded-xl p-4 border border-purple-200">
           <p className="text-sm text-purple-800 font-medium">
-            <strong>Crisis Helplines:</strong> iCall: 9152987821 Ã¢‚¬¢ Vandrevala Foundation: 1860-2662-345
+            <strong>Crisis Helplines:</strong> iCall: 9152987821 • Vandrevala Foundation: 1860-2662-345
           </p>
         </div>
       </div>

@@ -52,9 +52,9 @@ const formatPollutant = (pollutant: string): string => {
   const pollutantMap: Record<string, string> = {
     'pm25': 'PM2.5',
     'pm10': 'PM10',
-    'o3': 'Ozone (O‚ƒ)',
-    'no2': 'NO‚‚',
-    'so2': 'SO‚‚',
+    'o3': 'Ozone (O₃)',
+    'no2': 'NO₂',
+    'so2': 'SO₂',
     'co': 'CO',
   };
   return pollutantMap[pollutant?.toLowerCase()] || pollutant?.toUpperCase() || 'N/A';
@@ -1010,18 +1010,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
           </div>
 
           <div className="xl:col-span-2 flex flex-col">
-            <div className="bg-slate-900 rounded-[2rem] p-6 h-full flex flex-col relative overflow-hidden shadow-xl shadow-slate-900/10 min-h-[450px]">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-primary-400 rounded-full blur-[80px] opacity-20 pointer-events-none"></div>
+            <div style={{ backgroundColor: '#673A51' }} className="rounded-[2rem] p-6 h-full flex flex-col relative overflow-hidden shadow-xl shadow-dark-950/10 min-h-[450px]">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-white rounded-full blur-[80px] opacity-10 pointer-events-none"></div>
               <div className="relative z-10 flex flex-col h-full">
                 <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-                    <Lock size={16} className="text-primary-300" />
+                    <Lock size={16} className="text-pink-200" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-white text-sm">Midwife AI</h3>
                     <div className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary-300 animate-pulse"></span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Private & Secure</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-pink-300 animate-pulse"></span>
+                      <span className="text-[10px] font-bold text-white/60 uppercase tracking-wide">Private & Secure</span>
                     </div>
                   </div>
                   <SpeakButton text="Midwife AI. Your private and secure pregnancy assistant. Ask questions about your pregnancy journey." className="text-white border-white/30 bg-white/10 hover:bg-white/20" size={12} />
@@ -1029,9 +1029,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                 <div ref={midwifeChatRef} className="flex-1 space-y-4 mb-4 overflow-y-auto custom-scrollbar pr-1">
                   {midwifeChatMessages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'gap-3'}`}>
-                      <div className={`p-3 rounded-2xl text-xs leading-relaxed max-w-[85%] ${msg.sender === 'user'
-                        ? 'bg-primary-500 text-white rounded-tr-none'
-                        : 'bg-white/10 text-slate-200 rounded-tl-none border border-white/5'
+                      <div className={`p-3 rounded-2xl text-xs leading-relaxed max-w-[85%] shadow-sm ${msg.sender === 'user'
+                        ? 'bg-pink-500 text-white rounded-tr-none'
+                        : 'bg-white/10 text-slate-100 rounded-tl-none border border-white/5'
                         }`}>
                         {msg.text}
                       </div>
@@ -1039,8 +1039,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                   ))}
                   {isMidwifeChatLoading && (
                     <div className="flex gap-3">
-                      <div className="bg-white/10 p-3 rounded-2xl rounded-tl-none text-xs text-slate-200 border border-white/5 flex items-center gap-2">
-                        <Loader2 size={14} className="animate-spin" />
+                      <div className="bg-white/10 p-3 rounded-2xl rounded-tl-none text-xs text-secondary-100 border border-white/5 flex items-center gap-2 shadow-sm">
+                        <Loader2 size={14} className="animate-spin text-pink-300" />
                         Thinking...
                       </div>
                     </div>
@@ -1053,12 +1053,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                     onChange={(e) => setMidwifeChatInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleMidwifeChatSend()}
                     placeholder="Message..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary-400/50 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-400 dark:text-slate-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-400/50 transition-all placeholder:text-white/40"
                   />
                   <button
                     onClick={handleMidwifeChatSend}
                     disabled={!midwifeChatInput.trim() || isMidwifeChatLoading}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary-500 text-white rounded-lg flex items-center justify-center hover:bg-primary-400 transition-colors shadow-lg shadow-primary-800/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-pink-500 text-white rounded-lg flex items-center justify-center hover:bg-pink-400 transition-colors shadow-lg shadow-pink-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send size={14} />
                   </button>
