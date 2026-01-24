@@ -98,8 +98,8 @@ export const BabyCareEducation: React.FC = () => {
           <button
             key={i}
             className={`p-3 rounded-xl border text-center transition-all text-sm font-medium ${age.active
-                ? 'bg-secondary-50 border-secondary-200 text-secondary-600 shadow-sm'
-                : 'bg-white border-slate-100 text-slate-600 hover:border-secondary-200'
+              ? 'bg-secondary-50 border-secondary-200 text-secondary-600 shadow-sm'
+              : 'bg-white border-slate-100 text-slate-600 hover:border-secondary-200'
               }`}
           >
             {age.label}
@@ -232,8 +232,8 @@ export const BabyCareEducation: React.FC = () => {
                         key={type.id}
                         onClick={() => setSelectedCareType(type.id)}
                         className={`w-full p-5 rounded-2xl border-2 text-left transition-all ${selectedCareType === type.id
-                            ? 'border-purple-500 bg-purple-50'
-                            : 'border-slate-100 bg-white hover:border-purple-200'
+                          ? 'border-purple-500 bg-purple-50'
+                          : 'border-slate-100 bg-white hover:border-purple-200'
                           }`}
                       >
                         <div className="flex items-start gap-4">
@@ -508,10 +508,10 @@ export const BabyCareEducation: React.FC = () => {
                 <span className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-500">{vax.timing}</span>
               </div>
               <span className={`text-xs font-bold px-3 py-1 rounded-full ${vax.status === 'completed'
-                  ? 'bg-primary-100 text-primary-700'
-                  : vax.status === 'upcoming'
-                    ? 'bg-secondary-100 text-secondary-600'
-                    : 'bg-slate-100 text-slate-500'
+                ? 'bg-primary-100 text-primary-700'
+                : vax.status === 'upcoming'
+                  ? 'bg-secondary-100 text-secondary-600'
+                  : 'bg-slate-100 text-slate-500'
                 }`}>
                 {vax.status === 'completed' ? 'Done' : vax.status === 'upcoming' ? 'Next' : 'Pending'}
               </span>
