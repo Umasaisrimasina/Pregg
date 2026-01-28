@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, currentP
                 {currentPhase === 'baby-care' && <Baby size={20} />}
               </div>
               <span className="font-display font-bold text-xl tracking-tight text-slate-900 dark:text-dm-foreground">
-                PreConceive
+                NurtureNet
               </span>
             </div>
 

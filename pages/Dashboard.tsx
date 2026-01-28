@@ -1324,40 +1324,40 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
 
           <div className="lg:col-span-1 flex flex-col gap-6">
             {/* How are you feeling? Card */}
-            <div className="bg-primary-800 dark:bg-primary-950 rounded-[2rem] p-10 h-full flex flex-col">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="text-white text-3xl font-bold mb-3">How are you feeling?</h3>
+            <div className="bg-primary-800 dark:bg-primary-950 rounded-[2rem] p-8 flex flex-col">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <h3 className="text-white text-2xl font-bold">How are you feeling?</h3>
                 <SpeakButton text="How are you feeling? It's normal to feel a mix of emotions right now. Tracking helps. You can select Sad, Neutral, Good, or Great, and describe what's on your mind." className="text-white border-white/30 bg-white/10 hover:bg-white/20" />
               </div>
-              <p className="text-primary-200 text-base mb-8">It's normal to feel a mix of emotions right now. Tracking helps.</p>
+              <p className="text-primary-200 text-sm mb-6">It's normal to feel a mix of emotions right now. Tracking helps.</p>
 
-              <div className="flex flex-col gap-3 mb-8">
-                <div className="flex gap-4">
-                  <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">😢</span>
-                    <span className="text-primary-200 text-sm font-medium">Sad</span>
+              <div className="flex flex-col gap-3 mb-6">
+                <div className="flex gap-3">
+                  <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
+                    <span className="text-3xl">😢</span>
+                    <span className="text-primary-200 text-xs font-medium">Sad</span>
                   </button>
-                  <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <Meh size={40} className="text-amber-400" />
-                    <span className="text-primary-200 text-sm font-medium">Neutral</span>
+                  <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
+                    <Meh size={32} className="text-amber-400" />
+                    <span className="text-primary-200 text-xs font-medium">Neutral</span>
                   </button>
-                  <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">😊</span>
-                    <span className="text-primary-200 text-sm font-medium">Good</span>
+                  <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
+                    <span className="text-3xl">😊</span>
+                    <span className="text-primary-200 text-xs font-medium">Good</span>
                   </button>
-                  <button className="flex-1 flex flex-col items-center gap-3 p-5 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
-                    <span className="text-4xl">🤩</span>
-                    <span className="text-primary-200 text-sm font-medium">Great</span>
+                  <button className="flex-1 flex flex-col items-center gap-2 p-3 rounded-xl bg-primary-700/50 hover:bg-primary-600 transition-colors">
+                    <span className="text-3xl">🤩</span>
+                    <span className="text-primary-200 text-xs font-medium">Great</span>
                   </button>
                 </div>
               </div>
 
-              <div className="mt-auto">
-                <label className="text-primary-200 text-base font-medium mb-3 block">What's on your mind?</label>
+              <div>
+                <label className="text-primary-200 text-sm font-medium mb-2 block">What's on your mind?</label>
                 <textarea
                   placeholder="Describe how you're feeling..."
-                  rows={4}
-                  className="w-full px-5 py-4 rounded-xl bg-primary-700/50 border border-primary-600/50 text-white placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all resize-none"
+                  rows={3}
+                  className="w-full px-4 py-3 rounded-xl bg-primary-700/50 border border-primary-600/50 text-white placeholder-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all resize-none text-sm"
                 />
               </div>
             </div>
@@ -1372,13 +1372,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold">Doctor's 1:1 Call</h3>
-                    <p className="text-emerald-100 text-sm">Instant consultation</p>
+                    <p className="text-emerald-100">Instant consultation</p>
                   </div>
                 </div>
-                <p className="text-emerald-100 text-sm mb-6">Connect with Dr. Aditi Sharma for personalized advice and support.</p>
+                <p className="text-emerald-100 mb-6">Connect with Dr. Aditi Sharma for personalized advice and support.</p>
                 <button
                   onClick={() => setIsConsultationPopupOpen(true)}
-                  className="w-full bg-white text-emerald-600 px-6 py-4 rounded-xl font-bold text-sm shadow-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-3"
+                  className="w-full bg-white text-emerald-600 px-6 py-4 rounded-xl font-bold shadow-lg hover:bg-emerald-50 transition-all flex items-center justify-center gap-2"
                 >
                   <Phone size={20} />
                   Start Video Call

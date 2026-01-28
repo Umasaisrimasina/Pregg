@@ -188,7 +188,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <div className="w-8 h-8 rounded-md bg-primary-500 flex items-center justify-center">
               <Leaf size={16} className="text-white" />
             </div>
-            <span className="font-display font-bold text-lg tracking-tight">PreConceive</span>
+            <span className="font-display font-bold text-lg tracking-tight">NurtureNet</span>
           </div>
         </div>
 
@@ -202,7 +202,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="relative z-10 hidden lg:flex gap-8 text-sm font-medium text-white/80">
-          <span>© 2024 PreConceive</span>
+          <span>© 2024 NurtureNet</span>
           <span>Privacy Policy</span>
           <span>Terms</span>
         </div>

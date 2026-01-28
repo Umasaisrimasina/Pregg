@@ -118,7 +118,7 @@ const MainApp: React.FC<{
                   >
                     <Menu size={24} />
                   </button>
-                  <span className="font-display font-bold text-lg text-slate-900 dark:text-dm-foreground">PreConceive</span>
+                  <span className="font-display font-bold text-lg text-slate-900 dark:text-dm-foreground">NurtureNet</span>
                   <div className="flex items-center gap-2">
                     <LanguageSelector compact />
                     <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-dm-muted border border-white dark:border-dm-border shadow-sm overflow-hidden">

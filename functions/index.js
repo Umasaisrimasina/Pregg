@@ -1,5 +1,5 @@
 /**
- * Firebase Cloud Functions for PreConceive App
+ * Firebase Cloud Functions for NurtureNet App
  * 
  * Provides secure backend endpoints for:
  * - Text Translation (Azure Translator)
@@ -208,7 +208,7 @@ exports.textToSpeech = onRequest({ cors: true }, async (request, response) => {
         'Ocp-Apim-Subscription-Key': AZURE_SPEECH_KEY,
         'Content-Type': 'application/ssml+xml',
         'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
-        'User-Agent': 'PreConceiveApp'
+        'User-Agent': 'NurtureNetApp'
       },
       body: ssml
     });
@@ -326,7 +326,7 @@ exports.translateAndSpeak = onRequest({ cors: true }, async (request, response) 
         'Ocp-Apim-Subscription-Key': AZURE_SPEECH_KEY,
         'Content-Type': 'application/ssml+xml',
         'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3',
-        'User-Agent': 'PreConceiveApp'
+        'User-Agent': 'NurtureNetApp'
       },
       body: ssml
     });
