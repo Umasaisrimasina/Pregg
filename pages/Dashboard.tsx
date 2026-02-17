@@ -12,6 +12,7 @@ import { useHealthData } from '../contexts/HealthDataContext';
 import { ManualVitalsModal } from '../components/ManualVitalsModal';
 import { ConsultationPopup } from '../components/ConsultationPopup';
 import { DoctorConsultationFlow } from '../components/DoctorConsultationFlow';
+import { DigitalCaseHistory } from '../components/DigitalCaseHistory';
 
 interface DashboardProps {
   phase: AppPhase;
@@ -202,6 +203,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
   } = useHealthData();
 
   const [isAuthorizing, setIsAuthorizing] = useState(false);
+  const [medicalTab, setMedicalTab] = useState<'clinical' | 'case-history'>('clinical');
   const [fluidLevels, setFluidLevels] = useState({ water: 1.8, electrolyte: 1.0 });
   const [recoveryChecklist, setRecoveryChecklist] = useState([
     { label: 'Pelvic Floor Exercises', done: true },
@@ -740,149 +742,180 @@ export const Dashboard: React.FC<DashboardProps> = ({ phase, role }) => {
           <SpeakButton text="Doctor Perspective. Clinical Dashboard for monitoring patient health and pregnancy progress." />
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg"><Activity size={24} /></div>
-            <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-dm-foreground">Clinical Dashboard</h2>
-          </div>
-
-          <div className="flex w-full lg:w-auto gap-4">
-            <div className="relative flex-1 lg:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 dark:text-slate-500" size={16} />
-              <input type="text" placeholder="Search patient..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-100 dark:border-dm-border dark:border-dm-accent bg-white dark:bg-dm-muted text-slate-900 dark:text-dm-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-400 dark:text-slate-500" />
-            </div>
-            <button className="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-colors flex items-center gap-2">
-              <Bell size={16} /> Alerts (2)
-            </button>
-          </div>
+        {/* ── Tab Bar ── */}
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-dm-muted p-1 rounded-xl w-fit">
+          <button
+            onClick={() => setMedicalTab('clinical')}
+            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 ${medicalTab === 'clinical'
+                ? 'bg-white dark:bg-dm-card text-slate-900 dark:text-dm-foreground shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+          >
+            <Activity size={16} />
+            Clinical Dashboard
+          </button>
+          <button
+            onClick={() => setMedicalTab('case-history')}
+            className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 ${medicalTab === 'case-history'
+                ? 'bg-white dark:bg-dm-card text-slate-900 dark:text-dm-foreground shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+              }`}
+          >
+            <ClipboardList size={16} />
+            Digital Case History
+          </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Sidebar: Active Patients */}
-          <div className="lg:w-64 shrink-0 space-y-2">
-            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 px-2">Active Patients</h3>
-
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 p-3 rounded-2xl flex items-center gap-3 cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="Maya" className="w-10 h-10 rounded-full object-cover" />
-              <div>
-                <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Maya Sharma</h4>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">24 Weeks €¢ High Risk</p>
+        {/* ── Tab Content ── */}
+        {medicalTab === 'case-history' ? (
+          <DigitalCaseHistory />
+        ) : (
+          <>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg"><Activity size={24} /></div>
+                <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-dm-foreground">Clinical Dashboard</h2>
               </div>
-              <div className="w-1 h-8 bg-blue-500 rounded-full ml-auto"></div>
-            </div>
 
-            {[2, 3, 4].map(i => (
-              <div key={i} className="p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-dm-muted transition-colors opacity-60 hover:opacity-100">
-                <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-dm-accent"></div>
-                <div>
-                  <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Patient {i}</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Routine Checkup</p>
+              <div className="flex w-full lg:w-auto gap-4">
+                <div className="relative flex-1 lg:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 dark:text-slate-500" size={16} />
+                  <input type="text" placeholder="Search patient..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-100 dark:border-dm-border dark:border-dm-accent bg-white dark:bg-dm-muted text-slate-900 dark:text-dm-foreground text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-400 dark:text-slate-500" />
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 bg-white dark:bg-dm-card rounded-[2rem] p-8 border border-slate-100 dark:border-dm-border shadow-sm min-h-[600px]">
-            {/* Patient Header */}
-            <div className="flex justify-between items-start mb-8">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-dm-muted flex items-center justify-center text-slate-400 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">
-                  <User size={32} />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-dm-foreground">Maya Sharma</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm">Age: 28 | LMP: April 12, 2024 | G1P0</p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dm-muted dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dm-muted dark:hover:bg-slate-100 dark:hover:bg-dm-accent rounded-xl transition-colors">
-                  <MessageCircle size={20} />
-                </button>
-                <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dm-muted dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dm-muted dark:hover:bg-slate-100 dark:hover:bg-dm-accent rounded-xl transition-colors">
-                  <ClipboardList size={20} />
+                <button className="bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-colors flex items-center gap-2">
+                  <Bell size={16} /> Alerts (2)
                 </button>
               </div>
             </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-primary-50 dark:bg-primary-800/20 rounded-2xl p-5 border border-primary-100 dark:border-primary-800/30 relative overflow-hidden">
-                <div className="flex justify-between items-start mb-2">
-                  <AlertCircle size={20} className="text-primary-400" />
-                  <span className="bg-primary-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">URGENT</span>
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Left Sidebar: Active Patients */}
+              <div className="lg:w-64 shrink-0 space-y-2">
+                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 px-2">Active Patients</h3>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/30 p-3 rounded-2xl flex items-center gap-3 cursor-pointer">
+                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" alt="Maya" className="w-10 h-10 rounded-full object-cover" />
+                  <div>
+                    <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Maya Sharma</h4>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">24 Weeks €¢ High Risk</p>
+                  </div>
+                  <div className="w-1 h-8 bg-blue-500 rounded-full ml-auto"></div>
                 </div>
-                <span className="text-xs font-bold text-primary-700 dark:text-primary-300 uppercase tracking-wide">Blood Sugar</span>
-                <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">125 <span className="text-sm font-medium text-primary-500 dark:text-primary-300">mg/dL</span></div>
-                <p className="text-[10px] text-primary-600 dark:text-primary-300 mt-2 font-medium">Spike detected after lunch (Today)</p>
+
+                {[2, 3, 4].map(i => (
+                  <div key={i} className="p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-dm-muted transition-colors opacity-60 hover:opacity-100">
+                    <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-dm-accent"></div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Patient {i}</h4>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Routine Checkup</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div className="bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-5 border border-primary-100 dark:border-primary-900/30">
-                <TrendingUp size={20} className="text-primary-500 mb-2" />
-                <span className="text-xs font-bold text-primary-800 dark:text-primary-300 uppercase tracking-wide">Weight Gain</span>
-                <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">+4.2 <span className="text-sm font-medium text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">kg</span></div>
-                <p className="text-[10px] text-primary-700 dark:text-primary-300 mt-2 font-medium">On track for trimester 2</p>
-              </div>
+              {/* Main Content Area */}
+              <div className="flex-1 bg-white dark:bg-dm-card rounded-[2rem] p-8 border border-slate-100 dark:border-dm-border shadow-sm min-h-[600px]">
+                {/* Patient Header */}
+                <div className="flex justify-between items-start mb-8">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-dm-muted flex items-center justify-center text-slate-400 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">
+                      <User size={32} />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold font-display text-slate-900 dark:text-dm-foreground">Maya Sharma</h2>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">Age: 28 | LMP: April 12, 2024 | G1P0</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dm-muted dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dm-muted dark:hover:bg-slate-100 dark:hover:bg-dm-accent rounded-xl transition-colors">
+                      <MessageCircle size={20} />
+                    </button>
+                    <button className="p-2.5 text-slate-400 hover:text-slate-600 dark:bg-dm-muted dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-dm-muted dark:hover:bg-slate-100 dark:hover:bg-dm-accent rounded-xl transition-colors">
+                      <ClipboardList size={20} />
+                    </button>
+                  </div>
+                </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-5 border border-blue-100 dark:border-blue-900/30">
-                <Activity size={20} className="text-blue-500 mb-2" />
-                <span className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wide">Avg Sleep</span>
-                <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">7.5 <span className="text-sm font-medium text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">hrs</span></div>
-                <p className="text-[10px] text-blue-700 dark:text-blue-300 mt-2 font-medium">Consistent for last 7 days</p>
-              </div>
-            </div>
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="bg-primary-50 dark:bg-primary-800/20 rounded-2xl p-5 border border-primary-100 dark:border-primary-800/30 relative overflow-hidden">
+                    <div className="flex justify-between items-start mb-2">
+                      <AlertCircle size={20} className="text-primary-400" />
+                      <span className="bg-primary-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">URGENT</span>
+                    </div>
+                    <span className="text-xs font-bold text-primary-700 dark:text-primary-300 uppercase tracking-wide">Blood Sugar</span>
+                    <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">125 <span className="text-sm font-medium text-primary-500 dark:text-primary-300">mg/dL</span></div>
+                    <p className="text-[10px] text-primary-600 dark:text-primary-300 mt-2 font-medium">Spike detected after lunch (Today)</p>
+                  </div>
 
-            {/* Chart Section */}
-            <div className="mb-8">
-              <h3 className="font-bold text-slate-900 dark:text-dm-foreground mb-6">Long-term Trend: Blood Sugar</h3>
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={bloodSugarTrend}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" strokeOpacity={0.1} />
-                    <XAxis
-                      dataKey="day"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fill: '#94a3b8', fontSize: 12 }}
-                      dy={10}
-                    />
-                    <YAxis hide domain={[90, 140]} />
-                    <Tooltip
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
-                      itemStyle={{ color: '#000' }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#f43f5e"
-                      strokeWidth={3}
-                      dot={{ r: 4, fill: "#f43f5e", strokeWidth: 0 }}
-                      activeDot={{ r: 6, fill: "#f43f5e", strokeWidth: 0 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center mt-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary-400"></div>
-                    <span className="text-xs font-bold text-primary-400 uppercase tracking-widest">Blood Sugar (mg/dL)</span>
+                  <div className="bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-5 border border-primary-100 dark:border-primary-900/30">
+                    <TrendingUp size={20} className="text-primary-500 mb-2" />
+                    <span className="text-xs font-bold text-primary-800 dark:text-primary-300 uppercase tracking-wide">Weight Gain</span>
+                    <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">+4.2 <span className="text-sm font-medium text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">kg</span></div>
+                    <p className="text-[10px] text-primary-700 dark:text-primary-300 mt-2 font-medium">On track for trimester 2</p>
+                  </div>
+
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-5 border border-blue-100 dark:border-blue-900/30">
+                    <Activity size={20} className="text-blue-500 mb-2" />
+                    <span className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wide">Avg Sleep</span>
+                    <div className="text-3xl font-display font-bold text-slate-900 dark:text-dm-foreground mt-1">7.5 <span className="text-sm font-medium text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">hrs</span></div>
+                    <p className="text-[10px] text-blue-700 dark:text-blue-300 mt-2 font-medium">Consistent for last 7 days</p>
+                  </div>
+                </div>
+
+                {/* Chart Section */}
+                <div className="mb-8">
+                  <h3 className="font-bold text-slate-900 dark:text-dm-foreground mb-6">Long-term Trend: Blood Sugar</h3>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={bloodSugarTrend}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" strokeOpacity={0.1} />
+                        <XAxis
+                          dataKey="day"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: '#94a3b8', fontSize: 12 }}
+                          dy={10}
+                        />
+                        <YAxis hide domain={[90, 140]} />
+                        <Tooltip
+                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                          itemStyle={{ color: '#000' }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#f43f5e"
+                          strokeWidth={3}
+                          dot={{ r: 4, fill: "#f43f5e", strokeWidth: 0 }}
+                          activeDot={{ r: 6, fill: "#f43f5e", strokeWidth: 0 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                    <div className="flex justify-center mt-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-primary-400"></div>
+                        <span className="text-xs font-bold text-primary-400 uppercase tracking-widest">Blood Sugar (mg/dL)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Files */}
+                <div className="border-t border-slate-100 dark:border-dm-border pt-8">
+                  <h3 className="font-bold text-slate-900 dark:text-dm-foreground mb-4">Medical Files & Reports</h3>
+                  <div className="flex items-center gap-4 p-4 border border-slate-100 dark:border-dm-border rounded-xl hover:bg-slate-50 dark:hover:bg-dm-muted transition-colors cursor-pointer group">
+                    <div className="w-10 h-10 bg-primary-50 dark:bg-primary-800/20 text-primary-400 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-primary-100 dark:group-hover:bg-primary-800/40 transition-colors">PDF</div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Level 2 Ultrasound Scan</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">Uploaded 2 days ago</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Files */}
-            <div className="border-t border-slate-100 dark:border-dm-border pt-8">
-              <h3 className="font-bold text-slate-900 dark:text-dm-foreground mb-4">Medical Files & Reports</h3>
-              <div className="flex items-center gap-4 p-4 border border-slate-100 dark:border-dm-border rounded-xl hover:bg-slate-50 dark:hover:bg-dm-muted transition-colors cursor-pointer group">
-                <div className="w-10 h-10 bg-primary-50 dark:bg-primary-800/20 text-primary-400 rounded-lg flex items-center justify-center font-bold text-xs uppercase group-hover:bg-primary-100 dark:group-hover:bg-primary-800/40 transition-colors">PDF</div>
-                <div>
-                  <h4 className="font-bold text-slate-900 dark:text-dm-foreground text-sm">Level 2 Ultrasound Scan</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400 dark:text-slate-500">Uploaded 2 days ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     );
   }
